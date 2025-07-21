@@ -1,3 +1,4 @@
 files/database
 .env
 files/projects
+.DS_Store
