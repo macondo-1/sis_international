@@ -3,11 +3,12 @@ from pathlib import Path
 import sqlite3
 import csv
 from collections import defaultdict
+import constants as const
 
 class Project:
-    cur_path = Path(__file__).resolve().parent
-    projects_base_path = cur_path.joinpath('files/projects')
-    db_file_path = cur_path.joinpath('files/database/sis_database.db')
+    cur_path = const.cur_path
+    projects_base_path = const.projects_base_path
+    db_file_path = const.db_file_path
 
     base_filter_dict = {
         'country':[None],
@@ -32,7 +33,6 @@ class Project:
         self.project_manager = input("Project manager's name: ")
         self.greenarrow_server = input("Green Arrow server: ")
         self.greenarrow_template_name = '{0}_{1}'.format(self.number[:-1], self.name) # modify: this might not be necessary if it can be built out of the attributes
-        #self.filter = {}
 
     def save_project(self):
         """
