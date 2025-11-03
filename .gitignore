@@ -2,3 +2,5 @@ files/database
 .env
 files/projects
 .DS_Store
+constants.py
+files/utilities
