@@ -1,0 +1,5 @@
+[project]
+name = "project_class"
+version = "0.1.0"
+description = "project class module"
+dependencies = []
