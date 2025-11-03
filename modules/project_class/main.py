@@ -3,10 +3,9 @@ from pathlib import Path
 import sqlite3
 import csv
 from collections import defaultdict
-import constants as const
+import modules.constants.main as const
 
 class Project:
-    # cur_path = const.cur_path
     projects_base_path = const.projects_base_path
     db_file_path = const.db_file_path
 
@@ -27,12 +26,16 @@ class Project:
         'last_contact_date':[None],
     }
 
-    def __init__(self):
-        self.name = input('Project name: ')
-        self.number = input('Project number: ')
-        self.project_manager = input("Project manager's name: ")
-        self.greenarrow_server = input("Green Arrow server: ")
-        self.greenarrow_template_name = '{0}_{1}'.format(self.number[:-1], self.name) # modify: this might not be necessary if it can be built out of the attributes
+    def __init__(self, project_number:str = None, project_name:str = None):
+        if (not project_number and not project_name):
+            self.name = input('Project name: ')
+            self.number = input('Project number: ')
+            self.project_manager = input("Project manager's name: ")
+            self.greenarrow_server = input("Green Arrow server: ")
+            self.greenarrow_template_name = '{0}_{1}'.format(self.number[:-1], self.name) # modify: this might not be necessary if it can be built out of the attributes
+        else:
+            self.name = project_name
+            self.number = project_number       
 
     def save_project(self):
         """

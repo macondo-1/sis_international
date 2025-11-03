@@ -5,11 +5,17 @@ description = "sis international app workspace"
 requires-python = ">=3.11"
 dependencies = [
     "pandas",
-    "project_class"
+    "project_class",
+    "csv_tools",
+    "utilities",
+    "constants"
 ]
 
 [tool.uv.sources]
 project_class = { workspace = true }
+csv_tools = { workspace = true }
+utilities = { workspace = true }
+constants = { workspace = true }
 
 [tool.uv.workspace]
 members = ["modules/*"]
