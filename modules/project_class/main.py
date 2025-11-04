@@ -170,32 +170,6 @@ class Project:
             file.write(mail_message)
         
 
-
-# mail_message = """Focus Group en présentiel rémunéré | Indemnité de 150€
-
-# {FIRST_NAME},
-
-# SIS Research mène un focus group en présentiel rémunéré à Paris sur les habitudes des consommateurs.
-
-# Nous offrons une indemnité de 150€ aux personnes qui remplissent les critères, sont sélectionnées et participent à la session.
-
-# Le focus group aura lieu à Paris le jeudi 24 juillet, et durera environ 90 minutes. Nous nous intéressons aux opinions, perceptions et attitudes concernant les comportements des consommateurs. Il s’agit d’une étude de marché confidentielle et vos réponses seront utilisées uniquement à des fins de recherche d’opinion.
-
-# Si vous êtes intéressé(e), veuillez remplir le court questionnaire de présélection ci-dessous pour vérifier votre éligibilité. Si vous êtes sélectionné(e), nous vous contacterons avec plus de détails. Merci !
-
-# https://www.surveymonkey.com/r/HRM9WS3
-
-# Thank you."""
-
-# project = Project()
-# project.save_project()
-# project.save_mail_message(mail_message)
-# project_data = project.load_project()
-# filter_dict = project.load_project_filter()
-# full_query = project.build_sqlite_query(filter_dict)
-# results = project.retrieve_records_from_db(full_query)
-# project.save_sql_results_to_csv(results)
-
 # if __name__ == '__main__':
 #     handler = Project()
 #     project_dict = handler.load_project()

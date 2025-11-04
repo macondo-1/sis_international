@@ -8,7 +8,8 @@ dependencies = [
     "project_class",
     "csv_tools",
     "utilities",
-    "constants"
+    "constants",
+    "million_verifier_api"
 ]
 
 [tool.uv.sources]
@@ -16,6 +17,7 @@ project_class = { workspace = true }
 csv_tools = { workspace = true }
 utilities = { workspace = true }
 constants = { workspace = true }
+million_verifier_api = { workspace = true }
 
 [tool.uv.workspace]
 members = ["modules/*"]
