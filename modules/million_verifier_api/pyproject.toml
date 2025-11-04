@@ -1,0 +1,7 @@
+[project]
+name = "million_verifier_api"
+version = "0.1.0"
+description = "api handler"
+dependencies = [
+    "requests"
+]
