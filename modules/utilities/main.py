@@ -1,5 +1,9 @@
 import modules.constants.main as const
+import datetime
 import pandas as pd
+
+today = datetime.datetime.today()
+
 
 def get_information_from_blast_master_excel(it_project_number:str) -> dict:
     """
@@ -22,5 +26,28 @@ def get_information_from_blast_master_excel(it_project_number:str) -> dict:
 
     return inf_dict
 
+def fix_filename(filename:str) -> str:
+    """
+    Fixes the filename by:
+    1. replaces white spaces for underscores
+    2. removes all non-ascii characters
+    3. replaces considered punctuation marks for underscores:
+    3.1 .
+    3.2 ,
+    3.3 __
+    3. adds date as suffix of the filename
+    """
 
+    global today
+    today = today.strftime('%Y%m%d')
+    filename = filename.replace(' ','_')
+    filename = filename.replace('.','_')
+    filename = filename.replace(',','_')
+    filename = filename.replace('__','_')
+    filename = filename.encode('ascii', errors='ignore').decode('ascii')
+    filename = '{0}_{1}'.format(filename, today)
+    return filename
 
+if __name__ == '__main__':
+    filename = fix_filename(filename ="My .name, is  Ståle")
+    print(filename)
