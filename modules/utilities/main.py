@@ -69,16 +69,24 @@ def create_new_column_mapper(current_column_names:list) -> dict:
     """
 
     column_mapper = {}
+    chosen_columns = []
     for current_column_name in current_column_names:
         print(current_column_name)
 
         # PENDING - prints suggested columns (regex pattern using each word as keyword)
         keywords = current_column_name.split(' ')
+        keywords = [''.join(char for char in x if char.isalpha()) for x in keywords]
+        keywords = [x for x in keywords if x]
         matching_columns = find_matching_columns(keywords, const.DB_COLUMNS)
         print('suggested matching columns: {}'.format(matching_columns))
         print('all columns: {}'.format(const.DB_COLUMNS))
 
         new_column_name = input('new column name: ')
+        if new_column_name in chosen_columns:
+            print('column name already chosen, please select a new one')
+            new_column_name = input('new column name: ')
+        if new_column_name:
+            chosen_columns.append(new_column_name)
         column_mapper.update({current_column_name:new_column_name})
         print('')
 
