@@ -6,6 +6,10 @@ from modules.utilities.main import create_new_column_mapper, save_new_column_map
 import json
 import traceback
 import numpy as np
+import time
+import logging
+import sys
+import shutil
 
 readers = {
     '.csv' : pd.read_csv,
@@ -15,6 +19,7 @@ readers = {
 
 today_date_ = datetime.datetime.now()
 today_date_database = today_date_.strftime('%Y-%m-%d')
+today_date = today_date_.strftime('%Y%m%d')
 
 def get_project_info_from_filename() -> dict:
     """
@@ -55,11 +60,12 @@ def clean_list_manually(df):
     email_col = input('email column: ')
     additional_columns = input('select additional columns (separated by commas):')
 
-def fix_columns_to_match_db(df, file_path):
+# CHECK: very long function, re factor it
+def fix_columns_to_match_db(df, file_path, source='', status='', project_id = ''):
     """
     Fixes the csv file to match database columns using pandas
     """
-    global today_date
+    global today_date    
 
     try:
         columns = pd.Series(df.columns)
@@ -73,12 +79,18 @@ def fix_columns_to_match_db(df, file_path):
         for x in mappers_dict['mappers']:
             mapper_keys = pd.Series(x['map'].keys())
 
-            if columns.isin(mapper_keys).all():
+            # if columns.isin(mapper_keys).all():
+            if set(columns) == set(mapper_keys):
                 list_mapper_name = x['name']
                 break
         
         if not list_mapper_name:
+            logging.info('No mapper saved, need to process manually!')
             print('No column mapper found, please create a new one!')
+            shutil.move(file_path, const.MANUAL_CLEANING_DIR / file_path.name)
+            # sys.exit()
+            return
+
             try:
                 mapper_values = create_new_column_mapper(columns)
                 mapper_name = input('New column mapper name: ')
@@ -102,6 +114,7 @@ def fix_columns_to_match_db(df, file_path):
 
         # CHECK: the list comprehensions seems weird, maybe i can avoid the past for loop if I include everything in the
         # list comprehension?
+        time.sleep(.3)
         list_mapper = [x for x in mappers_dict['mappers'] if x['name'] == list_mapper_name][0]
         df = df.rename(columns = list_mapper['map'])
         df = df[list_mapper['map'].values()]
@@ -109,9 +122,13 @@ def fix_columns_to_match_db(df, file_path):
         # filling metadata
         file_name = file_path.stem
         available_sources = mappers_dict['sources']
-        source = input('Please provide the source of the list\n{0}\nSource: '.format(str(available_sources)))
-        available_statuses = mappers_dict['statuses']
-        status = input('Please provide the status of the records\n{0}\nStatus: '.format(str(available_statuses)))
+
+        # if not source:
+        #     source = input('Please provide the source of the list\n{0}\nSource: '.format(str(available_sources)))
+        # available_statuses = mappers_dict['statuses']
+        # if not status:
+        #     status = input('Please provide the status of the records\n{0}\nStatus: '.format(str(available_statuses)))
+        
         file_names = []
         file_names.append(file_name)
         df['file_name'] = str(file_names)
@@ -121,18 +138,35 @@ def fix_columns_to_match_db(df, file_path):
         df['creation_date'] = today_date_database
         df['last_update'] = today_date_database
         df['status'] = status
-        project_id = input('Please provide the internal project ID: ')
-        projects_ids = []
-        projects_ids.append(project_id)
-        df['projects_ids'] = str(projects_ids)
-        df_str = df.astype(str)
+        
+        # CHECK: the following if should deprecate this one
+        # # is it wise to have these two conditionals here?
+        # if not project_id and not 'projects_ids' in df.columns:
+        #     project_id = input('Please provide the internal project ID: ')
+        # projects_ids = []
+        # projects_ids.append(project_id)
+        # df['projects_ids'] = str(projects_ids)
+
+        if not 'projects_ids' in df.columns:
+            # if not project_id:
+            #     project_id = input('Please provide the internal project ID\n(click enter if not for a project): ')
+            projects_ids = []
+            projects_ids.append(project_id)
+            df['projects_ids'] = str(projects_ids)
+
+        # deleting all non-database columns
+        db_columns = [x for x in const.DB_COLUMNS if x in df.columns]
+        df = df[db_columns]
+        for column in db_columns:
+            df[column] = df[column].apply(lambda x: str(x) if x is not np.nan else None)
 
     except Exception as e:
         print('failed fixing columns to match database')
         print('error message: ', e)
         traceback.print_exc()
+        exit
 
-    return df_str
+    return df
 
 def fix_data_before_insert_to_db(df:pd.DataFrame) -> pd.DataFrame:
     """
@@ -142,6 +176,7 @@ def fix_data_before_insert_to_db(df:pd.DataFrame) -> pd.DataFrame:
     lower_columns = [x for x in lower_columns if x in df.columns]
 
     for column in lower_columns:
-        df[column] = df[column].str.lower().str.strip()
+        df[column] = df[column].apply(lambda x: str(x).lower().strip() if x is not None else None)
+        # df[column] = df[column].str.lower().str.strip()
 
     return df
