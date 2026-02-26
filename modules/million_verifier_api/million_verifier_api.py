@@ -3,6 +3,10 @@ import requests
 import logging 
 import json
 from pathlib import Path
+from dotenv import load_dotenv
+
+
+
 
 
 class APIError(Exception):
@@ -10,6 +14,7 @@ class APIError(Exception):
 
 class MillionVerifier:
     def __init__(self):
+        load_dotenv()
         self.api_key = os.getenv("MV_API_KEY")
         self.base_url = "https://bulkapi.millionverifier.com/bulkapi/v2"
 
