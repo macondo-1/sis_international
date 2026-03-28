@@ -9,3 +9,5 @@ modules/database/files
 __pycache__
 notes.txt
 modules/constants/main.py
+files/logs/bcc_cron.log
+files/logs/db_cron.log
