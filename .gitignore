@@ -6,4 +6,6 @@ constants.py
 files/utilities
 modules/constants/main.py
 modules/database/files
-**/__pycache__/
+__pycache__
+notes.txt
+modules/constants/main.py
