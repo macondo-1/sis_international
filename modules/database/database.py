@@ -617,7 +617,6 @@ def get_mailmerge_ready_records(project_id:str, limit:str):
                     AND r.is_active = 1
                     AND r.email_validation IN ('valid', 'ok')
                     AND (r."opt-in" = 1 OR r.is_gmail = 1)
-                    ORDER BY r.ID DESC
                     LIMIT ?;""", (project_id, limit))
     results = cursor.fetchall()
     conn.close()
@@ -665,7 +664,7 @@ def get_today_mm_quota():
             ;"""
     cursor.execute(query)
     return cursor.fetchall()
-    
+
 def get_today_blast_quota():
     conn, cursor = connect_to_db()
     query = """SELECT *
@@ -831,6 +830,26 @@ def reset_hourly_mailmerge_limits() -> None:
     conn.commit()
     conn.close()
 
+def choose_bcc_account() -> tuple:
+    conn, cursor = connect_to_db()
+    reset_daily_mailmerge_limits()
+    reset_hourly_mailmerge_limits()
+    query = """SELECT *
+                FROM bcc_accounts
+                WHERE is_active = 1
+                AND sent_today < daily_limit
+                AND sent_this_hour < hourly_limit
+                ORDER BY sent_today ASC, sent_this_hour ASC, last_sent_at ASC
+                LIMIT 1;"""
+    cursor.execute(query)
+    account = cursor.fetchone()
+    conn.commit()
+    conn.close()
+
+    if not account:
+        return None
+
+    return account
 
 def choose_smtp_account() -> tuple:
     conn, cursor = connect_to_db()
@@ -857,6 +876,18 @@ def update_smtp_counters(account_id: str) -> None:
     conn, cursor = connect_to_db()
 
     query = """UPDATE smtp_accounts
+                SET sent_today = sent_today + 1,
+                    sent_this_hour = sent_this_hour + 1,
+                    last_sent_at = datetime('now')
+                WHERE id = ?;"""
+    cursor.execute(query, (account_id,))
+    conn.commit()
+    conn.close()
+
+def update_bcc_counters(account_id: str) -> None:
+    conn, cursor = connect_to_db()
+
+    query = """UPDATE bcc_accounts
                 SET sent_today = sent_today + 1,
                     sent_this_hour = sent_this_hour + 1,
                     last_sent_at = datetime('now')

@@ -104,6 +104,6 @@ if __name__ == '__main__':
     acquire_lock()
     try:
         create_mm_list()
-        send_out_mm_list()
+        # send_out_mm_list()
     finally:
         release_lock()

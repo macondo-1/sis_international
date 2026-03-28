@@ -128,6 +128,7 @@ class SMTP():
                 self.mailserver.sendmail(msg['From'], msg['To'], msg.as_string())
                 update_smtp_counters(email_id)
                 update_project_recruits_last_mm_sent(mail['project_id'], mail['id'])
+                
                 df_index = new_df[new_df['Email'] == mail['Email']].index
                 new_df.loc[df_index,'status'] = 'sent'
 

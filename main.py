@@ -562,7 +562,7 @@ if __name__ == '__main__':
     acquire_lock()
     try:
         file_path = '/Users/albertoruizcajiga/Downloads/blast_needs.csv'
-        insert_new_blasting_quotas(file_path)
+        insert_new_mailmerging_quotas(file_path)
     finally:
         release_lock()
     

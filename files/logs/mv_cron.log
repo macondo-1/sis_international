@@ -10888,3 +10888,213 @@ DEBUG: 2026-03-27 18:20:07,452 - Starting new HTTPS connection (1): bulkapi.mill
 DEBUG: 2026-03-27 18:20:07,885 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
 INFO: 2026-03-27 18:20:07,889 - FINISHED LOOP
 
+INFO: 2026-03-27 18:30:09,866 - STARTING LOOP
+DEBUG: 2026-03-27 18:30:09,940 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:30:10,406 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:30:10,417 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:30:10,831 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:30:10,843 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:30:11,259 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:30:11,269 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:30:11,736 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+INFO: 2026-03-27 18:30:11,741 - FINISHED LOOP
+
+INFO: 2026-03-27 18:40:09,993 - STARTING LOOP
+DEBUG: 2026-03-27 18:40:10,041 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:40:10,422 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:40:10,430 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:40:10,816 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:40:10,826 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:40:11,214 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:40:11,224 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:40:11,697 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+INFO: 2026-03-27 18:40:11,701 - FINISHED LOOP
+
+INFO: 2026-03-27 18:50:07,457 - STARTING LOOP
+DEBUG: 2026-03-27 18:50:07,512 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:50:07,968 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:50:07,980 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:50:08,481 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:50:08,492 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:50:08,992 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 18:50:09,002 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 18:50:09,401 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+INFO: 2026-03-27 18:50:09,406 - FINISHED LOOP
+
+INFO: 2026-03-27 19:00:07,841 - STARTING LOOP
+DEBUG: 2026-03-27 19:00:07,906 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:00:08,328 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:00:08,340 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:00:08,841 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:00:08,854 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:00:09,353 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:00:09,365 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:00:09,865 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+INFO: 2026-03-27 19:00:09,870 - FINISHED LOOP
+
+INFO: 2026-03-27 19:10:07,653 - STARTING LOOP
+DEBUG: 2026-03-27 19:10:07,712 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:10:08,186 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:10:08,194 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:10:08,595 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:10:08,603 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:10:09,003 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:10:09,009 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:10:09,413 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+INFO: 2026-03-27 19:10:09,417 - FINISHED LOOP
+
+INFO: 2026-03-27 19:20:07,528 - STARTING LOOP
+DEBUG: 2026-03-27 19:20:07,591 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:20:07,981 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:20:07,992 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:20:08,453 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:20:08,459 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:20:08,964 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:20:08,970 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:20:09,243 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:20:09,255 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:20:09,527 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478283 HTTP/1.1" 200 None
+INFO: 2026-03-27 19:20:09,530 - FINISHED LOOP
+
+INFO: 2026-03-27 19:30:07,966 - STARTING LOOP
+DEBUG: 2026-03-27 19:30:08,023 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:30:08,519 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:30:08,527 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:30:09,030 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:30:09,038 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:30:09,438 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:30:09,447 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:30:09,711 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:30:09,718 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:30:10,158 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478283 HTTP/1.1" 200 None
+INFO: 2026-03-27 19:30:10,164 - FINISHED LOOP
+
+INFO: 2026-03-27 19:40:07,540 - STARTING LOOP
+DEBUG: 2026-03-27 19:40:07,599 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:40:08,022 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:40:08,033 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:40:08,291 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:40:08,298 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:40:08,690 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:40:08,703 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:40:09,072 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:40:09,082 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:40:09,501 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478283 HTTP/1.1" 200 None
+INFO: 2026-03-27 19:40:09,505 - FINISHED LOOP
+
+INFO: 2026-03-27 19:57:40,835 - STARTING LOOP
+DEBUG: 2026-03-27 19:57:40,896 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:57:41,313 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:57:41,322 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:57:41,583 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:57:41,590 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:57:42,071 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:57:42,080 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:57:42,365 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 19:57:42,375 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:57:42,776 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478283 HTTP/1.1" 200 None
+INFO: 2026-03-27 19:57:42,781 - Downloading 2010273 - auran_nyc...
+DEBUG: 2026-03-27 19:57:42,787 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 19:57:43,548 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/download?key=***REMOVED***&file_id=30478283&filter=all HTTP/1.1" 200 975884
+DEBUG: 2026-03-27 19:57:46,428 - Encoding detection: utf_8 is most likely the one.
+INFO: 2026-03-27 19:57:46,508 - Updating validation status... 
+INFO: 2026-03-27 19:58:02,664 - DONE!
+INFO: 2026-03-27 19:58:02,664 - FINISHED LOOP
+
+success!
+INFO: 2026-03-27 20:00:06,969 - STARTING LOOP
+DEBUG: 2026-03-27 20:00:06,996 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:00:07,271 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:00:07,280 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:00:07,687 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:00:07,696 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:00:08,098 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:00:08,107 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:00:08,374 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+INFO: 2026-03-27 20:00:08,377 - FINISHED LOOP
+
+INFO: 2026-03-27 20:10:07,919 - STARTING LOOP
+DEBUG: 2026-03-27 20:10:07,958 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:10:08,470 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:10:08,478 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:10:08,878 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:10:08,886 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:10:09,391 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:10:09,401 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:10:09,802 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:10:09,813 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:10:10,314 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478335 HTTP/1.1" 200 None
+INFO: 2026-03-27 20:10:10,319 - FINISHED LOOP
+
+INFO: 2026-03-27 20:21:37,020 - STARTING LOOP
+DEBUG: 2026-03-27 20:21:37,084 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:21:37,517 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:21:37,524 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:21:37,917 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:21:37,926 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:21:38,320 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:21:38,330 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:21:38,607 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:21:38,616 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:21:39,010 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478335 HTTP/1.1" 200 None
+INFO: 2026-03-27 20:21:39,012 - FINISHED LOOP
+
+INFO: 2026-03-27 20:30:42,693 - STARTING LOOP
+DEBUG: 2026-03-27 20:30:42,756 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:30:43,169 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:30:43,178 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:30:43,591 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:30:43,600 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:30:44,024 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:30:44,029 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:30:44,294 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:30:44,301 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:30:44,689 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478335 HTTP/1.1" 200 None
+INFO: 2026-03-27 20:30:44,691 - FINISHED LOOP
+
+INFO: 2026-03-27 20:40:26,584 - STARTING LOOP
+DEBUG: 2026-03-27 20:40:26,643 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:40:27,052 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:40:27,059 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:40:27,499 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:40:27,506 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:40:27,906 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:40:27,919 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:40:28,201 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:40:28,209 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:40:28,487 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478335 HTTP/1.1" 200 None
+INFO: 2026-03-27 20:40:28,490 - FINISHED LOOP
+
+INFO: 2026-03-27 20:50:07,523 - STARTING LOOP
+DEBUG: 2026-03-27 20:50:07,578 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:50:08,004 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:50:08,013 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:50:08,518 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:50:08,527 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:50:08,794 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:50:08,799 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:50:09,071 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 20:50:09,080 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 20:50:09,540 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478335 HTTP/1.1" 200 None
+INFO: 2026-03-27 20:50:09,544 - FINISHED LOOP
+
+INFO: 2026-03-27 21:00:08,310 - STARTING LOOP
+DEBUG: 2026-03-27 21:00:08,368 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 21:00:08,754 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367215 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 21:00:08,760 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 21:00:09,194 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30367929 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 21:00:09,203 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 21:00:09,600 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368294 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 21:00:09,608 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 21:00:10,013 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30368730 HTTP/1.1" 200 None
+DEBUG: 2026-03-27 21:00:10,022 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 21:00:10,528 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/fileinfo?key=***REMOVED***&file_id=30478335 HTTP/1.1" 200 None
+INFO: 2026-03-27 21:00:10,532 - Downloading 2010273 - auran_nyc...
+DEBUG: 2026-03-27 21:00:10,536 - Starting new HTTPS connection (1): bulkapi.millionverifier.com:443
+DEBUG: 2026-03-27 21:00:10,827 - https://bulkapi.millionverifier.com:443 "GET /bulkapi/v2/download?key=***REMOVED***&file_id=30478335&filter=all HTTP/1.1" 200 987906
+DEBUG: 2026-03-27 21:00:11,559 - Encoding detection: utf_8 is most likely the one.
+INFO: 2026-03-27 21:00:11,643 - Updating validation status... 
+INFO: 2026-03-27 21:00:25,641 - DONE!
+INFO: 2026-03-27 21:00:25,641 - FINISHED LOOP
+
+success!

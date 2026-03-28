@@ -57,6 +57,7 @@ GODADDY_PASSWORD = '***REMOVED***'
 GODADDY_EMAILS = """
 Available emails:
 
+
 ruthstanat@sisinternationalresearch.net
 ruthstanat@sisresearch.org
 
@@ -68,6 +69,14 @@ GODADDY_EMAILS_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/Google
 
 SMTP_LOG_FILE = Path('/Users/albertoruizcajiga/python/sis_international/files/logs/smtp_cron.log')
 
+BCC_LOG_FILE = Path('/Users/albertoruizcajiga/python/sis_international/files/logs/bcc_cron.log')
+
 SMTP_LOCK_FILE_PATH = Path('/Users/albertoruizcajiga/python/sis_international/modules/super_send/temp/smtp_lock_file.lock')
 
 BLAST_MASTER_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/My Drive/Information_Technology/alberto/utilities/blast_master_good_final.xlsx')
+
+BCC_FOOTER_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/' \
+'My Drive/Information_Technology/alberto/utilities/footer_bcc.txt')
+
+MAILING_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/' \
+'My Drive/Information_Technology/alberto/utilities/mailing_bot')
