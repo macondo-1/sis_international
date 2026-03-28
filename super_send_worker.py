@@ -1,4 +1,4 @@
-from modules.database.database import get_today_blast_quota, get_project_limit, insert_new_blasting_quotas, get_ss_ready_records, update_project_recruits_last_sent, add_new_million_verifier_job, get_mv_ready_records, get_active_validation_jobs_for_project, get_ss_campaign_id, get_project_name_with_project_number
+from modules.database.database import get_today_blast_quota, get_project_limit, insert_new_blasting_quotas, get_ss_ready_records, update_project_recruits_last_sent, add_new_million_verifier_job, get_mv_ready_records, get_active_validation_jobs_for_project, get_ss_campaign_id, get_project_name_with_project_number, get_project_limit_mm, get_today_mm_quota
 import modules.constants.main as const
 from modules.super_send.super_send import SuperSend
 from modules.million_verifier_api.million_verifier_api import MillionVerifier
@@ -12,6 +12,7 @@ logging.basicConfig(filename=const.SS_LOG_FILE, encoding='utf-8', level=logging.
 
 def acquire_lock():
     if os.path.exists(const.SS_LOCK_FILE_PATH):
+        logging.info('Lock file. Exiting program.')
         sys.exit()
     open(const.SS_LOCK_FILE_PATH, "w").close()
 
@@ -44,7 +45,13 @@ def main():
         project_id = project[1]
         data = get_project_limit(project_id)
         limit = int(data[0][0])
-        project_name = get_project_name_with_project_number(project_id)[0]
+        if limit < 0:
+            limit = 0
+        try:
+            project_name = get_project_name_with_project_number(project_id)[0]
+        except Exception as e:
+            print('error: {}'.format(e))
+            continue
         logging.info('Processing project {0} - {1}...'.format(project_id, project_name)) 
         logging.info('Getting records for SuperSend...')
         data = get_ss_ready_records(project_id, limit)
@@ -61,11 +68,22 @@ def main():
             super_send = SuperSend()
             data = super_send.bulk_create_contacts(contacts=contacts, campaign_id=campaign_id)
             if data != None:
-                logging.info('Upload successful!')
+                logging.info('SS Upload successful!')
                 update_project_recruits_last_sent(project_id, recruits_ids)
             else:
                 logging.warning('Error uploading records to SuperSend')
 
+
+
+    data_mm = get_today_mm_quota()
+    for project in data_mm:
+        project_id = project[1]
+        try:
+            project_name = get_project_name_with_project_number(project_id)[0]
+        except Exception as e:
+            print('error: {}'.format(e))
+            continue
+        logging.info('Processing project {0} - {1}...'.format(project_id, project_name))
         logging.info("Checking if there's active jobs in MillionVerifier...")
         jobs = get_active_validation_jobs_for_project(project_id)
         len_jobs = jobs[0]
@@ -73,15 +91,18 @@ def main():
             logging.info('Got {} active jobs, skipping for now!'.format(len_jobs))
         else:
             logging.info('No active jobs. Getting records for MillionVerifier...')
-            data = get_project_limit(project_id)
-            limit = int(data[0][0])
+            data = get_project_limit_mm(project_id)
+            try:
+                limit = int(data[0][0])
+            except:
+                limit = 0
             data = get_mv_ready_records(project_id, limit)
             recruits_ids = [x[0] for x in data]
             len_mv_records = len(recruits_ids)
             lines = [list(x) for x in data]
             lines = [x[1:] for x in data]
 
-            if len_mv_records <= 1:
+            if len_mv_records < 1:
                 logging.info('Got {} records for MillionVerifier, skipping for now!'.format(len_mv_records))
             else:
                 logging.info('Uploading {} to MillionVerifier...'.format(len_mv_records))

@@ -1,0 +1,13 @@
+[project]
+name = "apollo-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "constants",
+    "requests>=2.32.5",
+]
+
+[tool.uv.sources]
+constants = { workspace = true }

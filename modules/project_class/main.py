@@ -170,7 +170,7 @@ class Project:
             file.write(mail_message)
         
 
-# if __name__ == '__main__':
-#     handler = Project()
-#     project_dict = handler.load_project()
-#     print(project_dict)
+if __name__ == '__main__':
+    handler = Project()
+    project_dict = handler.load_project()
+    print(project_dict)

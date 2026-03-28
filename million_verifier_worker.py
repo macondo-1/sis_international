@@ -4,12 +4,14 @@ from modules.million_verifier_api.million_verifier_api import MillionVerifier
 import os
 import sys
 import logging
+import traceback
 
 logging.basicConfig(filename=const.MV_LOG_FILE, encoding='utf-8', level=logging.DEBUG, format='%(levelname)s: %(asctime)s - %(message)s')
 
 
 def acquire_lock():
     if os.path.exists(const.MV_LOCK_FILE_PATH):
+        logging.info('Lock!')
         sys.exit()
     open(const.MV_LOCK_FILE_PATH, "w").close()
 

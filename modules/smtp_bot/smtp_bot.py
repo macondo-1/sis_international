@@ -1,0 +1,158 @@
+import smtplib
+import pandas as pd
+
+import os
+import random
+import time
+import datetime
+import numpy as np
+import mimetypes
+from email.mime.text import MIMEText
+import email
+import email.mime.application
+import email.mime.multipart
+
+import modules.constants.main as const
+from modules.database.database import update_smtp_counters, update_project_recruits_last_mm_sent
+
+# CHECK: re route to csv tools or utilities
+# from bcc_bot import update_log
+# from bcc_bot import fixing_df_bis
+
+
+today = datetime.date.today()
+
+class SMTP():
+    """
+    This class handles everything related to sending out emails through smtp connection
+    """
+
+    def __init__(self, email_account):
+
+        df = pd.read_csv(const.GODADDY_EMAILS_PATH)
+        
+        # self.slize_size = int(input('How many emails?: '))
+        self.footer_path = const.FOOTER_PATH
+        self.mm_list_path = const.MM_READY_CSV
+        self.from_name = 'Ruth Stanat'
+        self.host = const.SMTP_HOST
+        self.port = const.SMTP_PORT
+        # self.email = input(const.GODADDY_EMAILS) # need to change this to a rotating something emails
+        self.email = email_account
+        self.password = const.GODADDY_PASSWORD
+        self.mailserver = smtplib.SMTP(self.host, self.port)
+        try:
+            self.mailserver.starttls()
+            self.mailserver.ehlo()
+            self.mailserver.login(self.email, self.password)
+        except:
+            message = 'failed connnecting to {0}, please try another account'.format(self.email)
+            print(message)
+    
+    def create_mail_msg_object(self, message, to_email):
+        """
+        Creates a email.message object so be sent through SMTP
+        """
+
+        from_string = '{0} <{1}>'.format(self.from_name, self.email)
+
+        msg = MIMEText(message.split('\n',1)[1])
+        msg.set_unixfrom('author')
+        msg['From'] = from_string
+        msg['To'] = to_email
+        msg['Subject'] = message.split('\n',1)[0]
+
+        return msg
+
+    def create_mail_msg_with_attachment(self, message, to_email):
+
+        from_string = '{0} <{1}>'.format(self.from_name, self.email)
+
+        # Create a text/plain message
+        msg = email.mime.multipart.MIMEMultipart()
+        msg['Subject'] = message.split('\n',1)[0]
+        msg['From'] = from_string
+        msg['To'] = to_email
+
+        # The main body is just another attachment
+        body = MIMEText(message.split('\n',1)[1])
+        msg.attach(body)
+
+        # PDF attachment
+        filename = '/Users/albertoruizcajiga/Downloads/Ruth Stanat  December 6 2025 Annual Holiday Party Invitation.pdf'
+        fp = open(filename,'rb')
+        att = email.mime.application.MIMEApplication(fp.read(),_subtype="pdf")
+        fp.close()
+        att.add_header('Content-Disposition','attachment',filename=filename)
+        msg.attach(att)
+
+        return msg
+
+    def update_log(self, df):
+        df = df[['Email','project_number','status','timestamp']]
+        log_path = const.LOG_PATH
+        df_log = pd.read_csv(log_path)
+
+        df_log = pd.concat([df_log,df], ignore_index=True)
+        df_log.to_csv(log_path, index=False)
+
+    def fixing_df_bis(self, list_filename):
+        df = pd.read_csv(list_filename)
+        os.remove(list_filename)
+        mailing_list = df.to_dict('records')
+        return mailing_list
+
+    def send_emails_smtp(self, email_id, remaining):
+        """
+        Fixes the message adding the footer to it
+        Loops over the mailing list and sends out an email per record
+        """
+        
+        # The following line is not needed as we don't want to slice the csv anymore
+        mailing_list = self.fixing_df_bis(self.mm_list_path)          # This function reads a csv as a dataframe and then turns it into a dict
+        mailing_list = mailing_list[:int(remaining)]
+        new_df = pd.DataFrame(mailing_list)                     # which seems unecessary if I'm turning it into a DF back again here
+        new_df['timestamp'] = today
+
+        with open(self.footer_path, 'r', encoding='utf-8') as file:
+            footer = file.read()
+        footer = footer.format(FROM_NAME=self.from_name)
+
+        # This loop is what actually sends out the mails
+        n = 1
+        for mail in mailing_list:
+            message_1 = mail['message'] + '\n\n' + footer
+            msg = self.create_mail_msg_object(message_1, mail['Email'])
+
+            try:
+                self.mailserver.sendmail(msg['From'], msg['To'], msg.as_string())
+                update_smtp_counters(email_id)
+                update_project_recruits_last_mm_sent(mail['project_id'], mail['id'])
+                df_index = new_df[new_df['Email'] == mail['Email']].index
+                new_df.loc[df_index,'status'] = 'sent'
+
+            except smtplib.SMTPRecipientsRefused:
+                print(f"Failed to send email to {mail}. Adding it to the list of failed emails.")
+                df_index = new_df[new_df['Email'] == mail['Email']].index
+                new_df.loc[df_index,'status'] = 'failed'
+                # update_log(new_df)
+                print('failed emails saved')
+
+            except KeyboardInterrupt:
+                new_df['status'] = new_df['status'].replace(np.nan,'failed')
+                # update_log(new_df)
+                print('failed emails saved')
+
+            except:
+                new_df['status'] = new_df['status'].replace(np.nan,'failed')
+                # update_log(new_df)
+                print('failed emails saved')    
+
+            wait_time = random.randint(1, 6)
+            message = '\nemail sent to {email}\n{total_sent} sent emails in total'.format(email=mail['Email'], total_sent=n)
+            print(message)
+            time.sleep(wait_time)
+            n += 1
+
+        self.mailserver.quit()
+        

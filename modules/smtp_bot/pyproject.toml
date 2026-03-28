@@ -1,0 +1,7 @@
+[project]
+name = "smtp_bot"
+version = "0.1.0"
+description = "Send emails using smpt library"
+dependencies = [
+    "pandas"
+]

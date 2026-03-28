@@ -1,0 +1,5 @@
+[project]
+name = "super_send"
+version = "0.1.0"
+description = ""
+dependencies = []

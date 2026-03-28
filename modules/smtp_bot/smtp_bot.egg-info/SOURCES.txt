@@ -1,0 +1,6 @@
+pyproject.toml
+smtp_bot.egg-info/PKG-INFO
+smtp_bot.egg-info/SOURCES.txt
+smtp_bot.egg-info/dependency_links.txt
+smtp_bot.egg-info/requires.txt
+smtp_bot.egg-info/top_level.txt

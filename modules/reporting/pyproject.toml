@@ -1,0 +1,16 @@
+[project]
+name = "reporting"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "constants",
+    "requests>=2.32.5",
+    "pandas",
+    "plotly",
+    "matplotlib"
+]
+
+[tool.uv.sources]
+constants = { workspace = true }

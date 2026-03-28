@@ -4,7 +4,7 @@ import sqlite3
 from pathlib import Path
 import csv
 import modules.constants.main as const
-from modules.csv_tools.main import read_file_pandas, fix_columns_to_match_db, fix_data_before_insert_to_db
+from modules.csv_tools.main import read_file_pandas, fix_columns_to_match_db, fix_data_before_insert_to_db, fix_columns_to_match_db_manual
 import os
 import sys
 import pandas as pd
@@ -204,10 +204,23 @@ def prepare_csv_for_database_input(file_path, source, status, project_id):
         df = fix_columns_to_match_db(df, file_path, source, status, project_id)
         df = fix_data_before_insert_to_db(df)
         df.to_csv(const.DATABASE_INPUT_DIR / Path(file_path).name, index=False)
+        os.remove(file_path)
     except Exception as e:
         print('failed preparing csv for database input. Error: ',e)
     # else:
     #     os.remove(file_path)
+
+def create_column_mapper_and_prepare_for_db_input(file_path, source, status, project_id):
+    try:
+        df = read_file_pandas(file_path)
+        # df = fix_columns_to_match_db_manual(df, file_path, source, status, project_id)
+        df = fix_data_before_insert_to_db(df)
+        df.to_csv(const.DATABASE_INPUT_DIR / Path(file_path).name, index=False)
+    except Exception as e:
+        print('failed preparing csv for database input. Error: ',e)
+    # else:
+    #     os.remove(file_path)
+
 
 def insert_new_csv_to_db(file_path):
     """
@@ -524,6 +537,9 @@ def get_ss_ready_records(project_id:str, limit:str):
     """
     conn, cursor = connect_to_db()
 
+    # removed the following line as we dont have million verifier anymore, add back when a validating system is back online
+        #     AND
+        # r.email_validation IN ('valid', 'ok')
     cursor.execute("""
         SELECT r.ID, r.first_name, r.email
         FROM recruits as r
@@ -536,11 +552,13 @@ def get_ss_ready_records(project_id:str, limit:str):
         (pr.last_sent_at < DATE('now', '-30 days') OR
         pr.last_sent_at IS NULL)
         AND
-        r.email NOT LIKE "%gmail%"
-        AND
-        r.email_validation IN ('valid', 'ok')
+        r.is_gmail = 0
+
         AND
         r.is_active = 1
+        AND
+        r."opt-in" = 0
+        ORDER BY r.ID DESC
         LIMIT ?
         ;""", (project_id, limit))
     results = cursor.fetchall()
@@ -555,8 +573,7 @@ def get_mv_ready_records(project_id:str, limit:str):
     """
     conn, cursor = connect_to_db()
 
-    limit = str(int(int(limit) * 1.1)) # so that the we have less verifying jobs by validating a bit more (counting for invalid results)
-
+    limit = str(int(int(limit) * 1.5)) # so that the we have less verifying jobs by validating a bit more (counting for invalid results)
     cursor.execute("""
         SELECT r.ID, r.first_name, r.email
         FROM recruits as r
@@ -572,10 +589,39 @@ def get_mv_ready_records(project_id:str, limit:str):
         (r.email_validation IS NULL OR
         r.email_validation  = 'not verified')
         AND
+        (r."opt-in" = 1 OR r.is_gmail = 1)
+        AND
         r.is_active = 1
+        ORDER BY r.ID DESC
         LIMIT ?
         ;""", (project_id, limit))
     return cursor.fetchall()
+
+def get_mailmerge_ready_records(project_id:str, limit:str):
+    """
+    ss ready meaning valid records
+    AND
+    not sent in a period of time
+    AND
+    LIKE gmail
+    """
+    conn, cursor = connect_to_db()
+    
+    # took this line off the query as we don't have a validating system now
+    # AND r.email_validation IN ('valid', 'ok')
+    cursor.execute("""SELECT r.ID, r.first_name, r.email
+                    FROM project_recruits pr
+                    JOIN recruits r ON r.ID = pr.recruit_id
+                    WHERE pr.project_id = ?
+                    AND COALESCE(pr.last_sent_at, '1900-01-01') < DATE('now', '-30 days')
+                    AND r.is_active = 1
+                    AND r.email_validation IN ('valid', 'ok')
+                    AND (r."opt-in" = 1 OR r.is_gmail = 1)
+                    ORDER BY r.ID DESC
+                    LIMIT ?;""", (project_id, limit))
+    results = cursor.fetchall()
+    conn.close()
+    return results
 
 def insert_new_blasting_quotas(file_path:str):
     conn, cursor = connect_to_db()
@@ -594,6 +640,32 @@ def insert_new_blasting_quotas(file_path:str):
     conn.commit()
     conn.close()
 
+def insert_new_mailmerging_quotas(file_path:str):
+    conn, cursor = connect_to_db()
+    with open(file_path, 'r') as file:
+        reader = csv.reader(file)
+        headers = next(reader)
+        headers_str = ', '.join(headers)
+        placeholders = ', '.join(['?'] * len(headers))
+        query = 'INSERT INTO daily_project_quota_mm ({0}) VALUES ({1})'.format(headers_str, placeholders)
+        rows_to_insert = []
+        for row in reader:
+            row = [None if value == "" else value for value in row]
+            rows_to_insert.append(row)
+
+    cursor.executemany(query, rows_to_insert)
+    conn.commit()
+    conn.close()
+
+def get_today_mm_quota():
+    conn, cursor = connect_to_db()
+    query = """SELECT *
+            FROM daily_project_quota
+            WHERE run_date = DATE('now')
+            ;"""
+    cursor.execute(query)
+    return cursor.fetchall()
+    
 def get_today_blast_quota():
     conn, cursor = connect_to_db()
     query = """SELECT *
@@ -611,11 +683,53 @@ def get_project_limit(project_id):
                 FROM daily_project_quota AS dq
                 LEFT JOIN project_recruits AS pr
                     ON pr.project_id = dq.project_id
-                    AND pr.last_sent_at >= DATE('now')
+                    AND date(pr.last_sent_at) >= date('now')
+                    AND (pr.strategy = 'super_send' OR 
+                    pr.strategy IS NULL)
                 WHERE
-                dq.project_id = ?
-                AND
-                dq.run_date = DATE('now')
+                    dq.project_id = ?
+                    AND dq.run_date = date('now')
+                GROUP BY dq.total_records;"""      
+    values = (project_id,)
+    cursor.execute(query, values)
+    data = cursor.fetchall()
+    conn.close()
+    return data
+
+def get_project_limit_mm(project_id):
+    conn, cursor = connect_to_db()
+    query = """SELECT 
+                    dq.total_records -
+                    COUNT(pr.recruit_id) AS remaining
+                FROM daily_project_quota_mm AS dq
+                LEFT JOIN project_recruits AS pr
+                    ON pr.project_id = dq.project_id
+                    AND date(pr.last_sent_at) >= date('now')
+                    AND (pr.strategy = 'mailmerge' OR 
+                    pr.strategy IS NULL)
+                WHERE
+                    dq.project_id = ?
+                    AND dq.run_date = date('now')
+                GROUP BY dq.total_records;"""      
+    values = (project_id,)
+    cursor.execute(query, values)
+    data = cursor.fetchall()
+    conn.close()
+    return data
+
+def get_project_limit_mm(project_id):
+    conn, cursor = connect_to_db()
+    query = """SELECT 
+                    dq.total_records -
+                    COUNT(pr.recruit_id) AS remaining
+                FROM daily_project_quota_mm AS dq
+                LEFT JOIN project_recruits AS pr
+                    ON pr.project_id = dq.project_id
+                    AND date(pr.last_sent_at) >= date('now')
+                    AND (pr.strategy = 'mailmerge' OR pr.strategy IS NULL)
+                WHERE
+                    dq.project_id = ?
+                    AND dq.run_date = date('now')
                 GROUP BY dq.total_records;"""      
     values = (project_id,)
     cursor.execute(query, values)
@@ -626,7 +740,8 @@ def get_project_limit(project_id):
 def update_project_recruits_last_sent(project_id:str, recruits_ids:list):
     query = """UPDATE project_recruits
             SET 
-            last_sent_at = DATE('now')
+            last_sent_at = DATE('now'),
+            strategy = 'super_send'
             WHERE project_id = ?
             AND recruit_id = ?
             ;"""
@@ -635,6 +750,20 @@ def update_project_recruits_last_sent(project_id:str, recruits_ids:list):
         values.append((project_id, x))
     conn, cursor = connect_to_db()
     cursor.executemany(query, values)
+    conn.commit()
+    conn.close()
+
+def update_project_recruits_last_mm_sent(project_id:str, recruit_id:str):
+    query = """UPDATE project_recruits
+            SET 
+            last_sent_at = DATE('now'),
+            strategy = 'mailmerge'
+            WHERE project_id = ?
+            AND recruit_id = ?
+            ;"""
+    value = (project_id, recruit_id)
+    conn, cursor = connect_to_db()
+    cursor.execute(query, value)
     conn.commit()
     conn.close()
 
@@ -675,8 +804,120 @@ def get_project_name_with_project_number(project_id:str) -> tuple:
     cursor.execute(query, values)
     data = cursor.fetchone()
     conn.close()
+    if data:
+        return data
+    else:
+        raise Exception('No project saved for the project id: {}.'.format(project_id))
 
-    return data
+def reset_daily_mailmerge_limits() -> None:
+    conn, cursor = connect_to_db()
+    query = """UPDATE smtp_accounts
+                SET sent_today = 0
+                WHERE date(last_sent_at) < date('now');"""
+    cursor.execute(query)
+
+    conn.commit()
+    conn.close()
+
+def reset_hourly_mailmerge_limits() -> None:
+    conn, cursor = connect_to_db()
+    query = """UPDATE smtp_accounts
+                SET sent_this_hour = 0,
+                    hour_window_start = datetime('now')
+                WHERE hour_window_start IS NULL
+                OR datetime(hour_window_start, '+1 hour') <= datetime('now');"""
+    cursor.execute(query)
+
+    conn.commit()
+    conn.close()
+
+
+def choose_smtp_account() -> tuple:
+    conn, cursor = connect_to_db()
+    reset_daily_mailmerge_limits()
+    reset_hourly_mailmerge_limits()
+    query = """SELECT *
+                FROM smtp_accounts
+                WHERE is_active = 1
+                AND sent_today < daily_limit
+                AND sent_this_hour < hourly_limit
+                ORDER BY sent_today ASC, sent_this_hour ASC, last_sent_at ASC
+                LIMIT 1;"""
+    cursor.execute(query)
+    account = cursor.fetchone()
+    conn.commit()
+    conn.close()
+
+    if not account:
+        return None
+
+    return account
+
+def update_smtp_counters(account_id: str) -> None:
+    conn, cursor = connect_to_db()
+
+    query = """UPDATE smtp_accounts
+                SET sent_today = sent_today + 1,
+                    sent_this_hour = sent_this_hour + 1,
+                    last_sent_at = datetime('now')
+                WHERE id = ?;"""
+    cursor.execute(query, (account_id,))
+    conn.commit()
+    conn.close()
+
+def get_today_mm_quota():
+    conn, cursor = connect_to_db()
+    query = """SELECT *
+            FROM daily_project_quota_mm
+            WHERE run_date = DATE('now')
+            ;"""
+    cursor.execute(query)
+    return cursor.fetchall()
+
+def insert_into_table_surveys(survey_id:str, project_id:str, survey_name:str, platform:str):
+    conn, cursor = connect_to_db()
+    query = """INSERT INTO surveys
+                ('survey_id', 'project_id', 'survey_name', 'platform')
+                VALUES
+                (?, ?, ?, ?)
+                ;"""
+    values = (survey_id, project_id, survey_name, platform)
+    cursor.execute(query, values)
+    conn.commit()
+    conn.close()
+
+def insert_into_table_surveys_bulk(values=list):
+    conn, cursor = connect_to_db()
+    query = """INSERT OR IGNORE INTO surveys
+                ('survey_id', 'project_id', 'survey_name', 'platform')
+                VALUES
+                (?, ?, ?, ?)
+                ;"""
+    cursor.executemany(query, values)
+    conn.commit()
+    conn.close()
+
+def insert_into_table_survey_collectors_bulk(values=list):
+    conn, cursor = connect_to_db()
+    query = """INSERT OR IGNORE INTO survey_collectors
+                ('collector_id', 'survey_id', 'collector_name', 'collector_type', 'url')
+                VALUES
+                (?, ?, ?, ?, ?)
+                ;"""
+    cursor.executemany(query, values)
+    conn.commit()
+    conn.close()
+
+def insert_into_table_survey_responses_daily_bulk(values=list):
+    conn, cursor = connect_to_db()
+    query = """INSERT OR IGNORE INTO survey_responses_daily
+                ('collector_id', 'response_date', 'response_count')
+                VALUES
+                (?, DATE(?), ?)
+                ;"""
+    cursor.executemany(query, values)
+    conn.commit()
+    conn.close()
 
 # query to select all matches
 # create table projects_recipients

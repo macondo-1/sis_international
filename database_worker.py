@@ -1,4 +1,4 @@
-from modules.database.database import insert_new_csv_to_db, save_newly_added_records_to_project, get_project_name_with_project_number, prepare_csv_for_database_input
+from modules.database.database import insert_new_csv_to_db, save_newly_added_records_to_project, get_project_name_with_project_number, prepare_csv_for_database_input, create_column_mapper_and_prepare_for_db_input
 import modules.constants.main as const
 import os
 import shutil
@@ -38,9 +38,9 @@ def main():
             new_file_name = new_file_name.split('__')[1]
 
         try:
-            logging.info('Preparing csv for database input...')
-            prepare_csv_for_database_input(file_path, source=source, project_id=project_id, status='cold')
-            logging.info('DONE!')
+            # logging.info('Preparing csv for database input...')
+            # prepare_csv_for_database_input(file_path, source=source, project_id=project_id, status='cold')
+            # logging.info('DONE!')
 
             logging.info('Inserting file {}...'.format(Path(file_path).name))
             data = insert_new_csv_to_db(file_path)
