@@ -469,34 +469,74 @@ def update_mv_job_status(job_id, status, output_path=None):
     """, (status, datetime.utcnow(), output_path, job_id))
     conn.commit()
     
-def save_records_to_project(project_id:str):
-    try:
-        conn, cursor = connect_to_db()
-        # sql_file_path = const.projects_base_path / project_id / '{}.sql'.format(project_id)
-        sql_file_path = '/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/test_sql.sql'
-        with open(sql_file_path, 'r') as file:
-            query = file.read()
+# def save_records_to_project(project_id:str):
+#     try:
+#         conn, cursor = connect_to_db()
+#         # sql_file_path = const.projects_base_path / project_id / '{}.sql'.format(project_id)
+#         sql_file_path = '/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/test_sql.sql'
+#         with open(sql_file_path, 'r') as file:
+#             query = file.read()
 
-        cursor.execute(query)
-        results = cursor.fetchall()
+#         cursor.execute(query)
+#         results = cursor.fetchall()
 
-        values = []
-        project_id_int = int(project_id)
-        for x in results:
-            values.append((project_id_int, x[0]))
+#         values = []
+#         project_id_int = int(project_id)
+#         for x in results:
+#             values.append((project_id_int, x[0]))
 
         
-        cursor.executemany("""
-            INSERT OR IGNORE INTO project_recruits (project_id, recruit_id)
-            VALUES (?, ?)
-        """, values)
+#         cursor.executemany("""
+#             INSERT OR IGNORE INTO project_recruits (project_id, recruit_id)
+#             VALUES (?, ?)
+#         """, values)
 
+#         conn.commit()
+#         conn.close()
+#         print('success!')
+#     except Exception as e:
+#         print('Something failed saving records for a project. Error: ', e)
+#         traceback.print_exc()
+
+def save_records_to_project(project_id: str):
+    conn = None
+    try:
+        conn, cursor = connect_to_db()
+
+        sql_file_path = '/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/test_sql.sql'
+        with open(sql_file_path, 'r') as file:
+            base_query = file.read().strip().rstrip(';')
+
+        insert_query = f"""
+        INSERT OR IGNORE INTO project_recruits (project_id, recruit_id, strategy)
+        WITH target_recruits AS (
+            {base_query}
+        )
+        SELECT
+            ?,
+            t.ID,
+            CASE
+                WHEN t.is_active = 1
+                     AND t.is_gmail = 0
+                     AND t."opt-in" = 0
+                THEN 'super_send'
+                WHEN t.is_active = 1
+                     AND (t."opt-in" = 1 OR t.is_gmail = 1)
+                THEN 'mailmerge'
+            END
+        FROM target_recruits t
+        """
+        cursor.execute(insert_query, (int(project_id),))
         conn.commit()
-        conn.close()
         print('success!')
+
     except Exception as e:
         print('Something failed saving records for a project. Error: ', e)
         traceback.print_exc()
+
+    finally:
+        if conn:
+            conn.close()
 
 def save_newly_added_records_to_project(project_id:str, ids:list[tuple]) -> None:
     try:
@@ -507,16 +547,31 @@ def save_newly_added_records_to_project(project_id:str, ids:list[tuple]) -> None
 
         conn, cursor = connect_to_db()
         cursor.executemany("""
-            INSERT OR IGNORE INTO project_recruits (project_id, recruit_id)
-            VALUES (?, ?)
-        """, values)
+        INSERT OR IGNORE INTO project_recruits (project_id, recruit_id, strategy)
+        SELECT
+            ?,
+            r.ID,
+            CASE
+                WHEN r.is_active = 1
+                     AND r.is_gmail = 0
+                     AND r."opt-in" = 0
+                THEN 'super_send'
+                WHEN r.is_active = 1
+                     AND (r."opt-in" = 1 OR r.is_gmail = 1)
+                THEN 'mailmerge'
+                ELSE NULL
+            END
+        FROM recruits r
+        WHERE r.ID = ?
+    """, values)
 
         conn.commit()
-        conn.close()
         print('success!')
     except Exception as e:
         print('Something failed saving records for a project. Error: ', e)
         traceback.print_exc()
+    finally:
+        conn.close()
 
 def get_project_recruits(project_id:str):
     conn, cursor = connect_to_db()
@@ -558,7 +613,6 @@ def get_ss_ready_records(project_id:str, limit:str):
         r.is_active = 1
         AND
         r."opt-in" = 0
-        ORDER BY r.ID DESC
         LIMIT ?
         ;""", (project_id, limit))
     results = cursor.fetchall()
@@ -592,7 +646,6 @@ def get_mv_ready_records(project_id:str, limit:str):
         (r."opt-in" = 1 OR r.is_gmail = 1)
         AND
         r.is_active = 1
-        ORDER BY r.ID DESC
         LIMIT ?
         ;""", (project_id, limit))
     return cursor.fetchall()
@@ -830,10 +883,51 @@ def reset_hourly_mailmerge_limits() -> None:
     conn.commit()
     conn.close()
 
+def reset_daily_bcc_limits() -> None:
+    conn, cursor = connect_to_db()
+    query = """UPDATE bcc_accounts
+                SET sent_today = 0
+                WHERE date(last_sent_at) < date('now');"""
+    cursor.execute(query)
+
+    conn.commit()
+    conn.close()
+
+def reset_hourly_bcc_limits() -> None:
+    conn, cursor = connect_to_db()
+    query = """UPDATE bcc_accounts
+                SET sent_this_hour = 0,
+                    hour_window_start = datetime('now')
+                WHERE hour_window_start IS NULL
+                OR datetime(hour_window_start, '+1 hour') <= datetime('now');"""
+    cursor.execute(query)
+
+    conn.commit()
+    conn.close()
+
+def choose_melissa_bcc_account() -> tuple:
+    conn, cursor = connect_to_db()
+    reset_daily_bcc_limits()
+    reset_hourly_bcc_limits()
+    query = """SELECT *
+                FROM bcc_accounts
+                WHERE
+                id = 3
+                LIMIT 1;"""
+    cursor.execute(query)
+    account = cursor.fetchone()
+    conn.commit()
+    conn.close()
+
+    if not account:
+        return None
+
+    return account
+
 def choose_bcc_account() -> tuple:
     conn, cursor = connect_to_db()
-    reset_daily_mailmerge_limits()
-    reset_hourly_mailmerge_limits()
+    reset_daily_bcc_limits()
+    reset_hourly_bcc_limits()
     query = """SELECT *
                 FROM bcc_accounts
                 WHERE is_active = 1
@@ -913,6 +1007,18 @@ def insert_into_table_surveys(survey_id:str, project_id:str, survey_name:str, pl
                 (?, ?, ?, ?)
                 ;"""
     values = (survey_id, project_id, survey_name, platform)
+    cursor.execute(query, values)
+    conn.commit()
+    conn.close()
+
+def insert_new_project(project_id:str, project_name:str, ss_campaign_id:str):
+    conn, cursor = connect_to_db()
+    query = """INSERT INTO projects
+                (project_id, project_name, ss_campaign_id)
+                VALUES
+                (?, ?, ?)
+                ;"""
+    values = (project_id, project_name, ss_campaign_id)
     cursor.execute(query, values)
     conn.commit()
     conn.close()
