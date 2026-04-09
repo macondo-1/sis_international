@@ -53,7 +53,7 @@ MM_READY_CSV = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-b
 FOOTER_PATH = Path('/Users/albertoruizcajiga/python/sis_international/modules/smtp_bot/files/footer.txt')
 SMTP_HOST = 'smtp.office365.com'
 SMTP_PORT = 587
-GODADDY_PASSWORD = '***REMOVED***'
+
 GODADDY_EMAILS = """
 Available emails:
 

@@ -15,6 +15,11 @@ import email.mime.multipart
 import modules.constants.main as const
 from modules.database.database import update_smtp_counters, update_project_recruits_last_mm_sent
 
+from dotenv import load_dotenv
+
+load_dotenv() 
+
+
 # CHECK: re route to csv tools or utilities
 # from bcc_bot import update_log
 # from bcc_bot import fixing_df_bis
@@ -39,7 +44,7 @@ class SMTP():
         self.port = const.SMTP_PORT
         # self.email = input(const.GODADDY_EMAILS) # need to change this to a rotating something emails
         self.email = email_account
-        self.password = const.GODADDY_PASSWORD
+        self.password = os.getenv("GODADDY_PASSWORD")
         self.mailserver = smtplib.SMTP(self.host, self.port)
         try:
             self.mailserver.starttls()
