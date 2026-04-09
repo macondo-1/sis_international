@@ -93,7 +93,12 @@ def send_out_mm_list():
         remaining = 0
     email_account = data[1]
     email_id = data[0]
-    handler = SMTP(email_account)
+    try:
+        handler = SMTP(email_account)
+    except RuntimeError as e:
+        logging.error('Could not connect to SMTP account: %s', e)
+        logging.info('FINISHED LOOP\n')
+        exit()
     handler.send_emails_smtp(email_id, remaining)
     logging.info('DONE!') 
     logging.info('FINISHED LOOP\n')
@@ -104,6 +109,6 @@ if __name__ == '__main__':
     acquire_lock()
     try:
         create_mm_list()
-        # send_out_mm_list()
+        send_out_mm_list()
     finally:
         release_lock()

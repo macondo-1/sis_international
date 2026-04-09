@@ -42,11 +42,13 @@ def main():
             # prepare_csv_for_database_input(file_path, source=source, project_id=project_id, status='cold')
             # logging.info('DONE!')
 
-            logging.info('Inserting file {}...'.format(Path(file_path).name))
+            logging.info('Inserting file %s...', Path(file_path).name)
             data = insert_new_csv_to_db(file_path)
             ids = data[0]
             logging.info('DONE!') 
             if project_id:
+                # check: uncaught error if project name cannot be obtained
+                # check: doesnt work if project is not in project table before
                 project_name = get_project_name_with_project_number(project_id)[0]
                 logging.info('Saving for project {0} - {1}'.format(project_id, project_name))
                 save_newly_added_records_to_project(project_id, ids)
