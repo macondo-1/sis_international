@@ -6,8 +6,14 @@ constants.py
 files/utilities
 modules/constants/main.py
 modules/database/files
-__pycache__
 notes.txt
-modules/constants/main.py
-files/logs/bcc_cron.log
-files/logs/db_cron.log
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs
+files/logs/
+
+# MillionVerifier temp files
+modules/million_verifier_api/temp/
