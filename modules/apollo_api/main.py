@@ -1,10 +1,8 @@
-# import modules.constants as const
 import requests
 import json
-import os
+from config import APOLLO_API_KEY
 
-
-api_key = os.getenv('APOLLO_API_KEY')
+api_key = APOLLO_API_KEY
 base_url = "https://api.apollo.io/api/v1/contacts/search"
 
 def api_call(query):

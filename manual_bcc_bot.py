@@ -24,24 +24,28 @@ def release_lock():
 def create_mm_list():
     logging.info('STARTING LOOP')
     logging.info('Getting blasts quota...')
-    data = db.get_today_mm_quota()
+    projects_ids = input("Provide manual bcc project's id's separated by commas: ")
+    projects_ids = projects_ids.split(',')
+    projects_ids = [x.strip() for x in projects_ids]
+    # data = db.get_today_mm_quota()
     logging.info('DONE!')
 
-    if not data:
+    if not projects_ids:
         logging.warning('No projects to work on!')
         logging.info('FINISHED LOOP\n')
         return
 
     df_blast_master = pd.read_excel(const.BLAST_MASTER_PATH)
     mm_list = []
-    for project in data:
-        project_id = project[1]
+    for project_id in projects_ids:
+        # project_id = project
 
         project_info = get_project_info(project_id, df_blast_master)
         message = project_info['Blast Message']
 
-        data = db.get_project_limit_mm(project_id)
-        limit = int(data[0][0])
+        # data = db.get_project_limit_mm(project_id)
+        # limit = int(data[0][0])
+        limit = int(input("Select how many emails you want to send out: "))
         if limit < 0:
             limit = 0
         try:
@@ -70,8 +74,10 @@ def create_mm_list():
             writer.writerow(['id','First_name','Email','message', 'project_id'])
             writer.writerows(mm_list)
 
+    return limit
 
-def send_out_mm_list():
+
+def send_out_mm_list(slice_size):
     logging.info('STARTING LOOP')
     if not const.MM_READY_CSV.exists():
         logging.info("there's no mailmerge list. Skipping for now...")
@@ -79,8 +85,8 @@ def send_out_mm_list():
         sys.exit()
 
     logging.info('Sending out mailerge list...')
-    # CHECK: Need to log the email sending as it happens
-    data = db.choose_bcc_account()
+
+    data = db.choose_melissa_bcc_account()
     if not data:
         logging.info('No available accounts!')
         logging.info('FINISHED LOOP\n')
@@ -93,9 +99,10 @@ def send_out_mm_list():
     email_account = data[1]
     email_id = data[0]
 
-    cc = None
-    FROM_EMAIL = email_account
-    slice_size = 100
+    cc = input('Type email you want to CC: ')
+    FROM_EMAIL = input("\nAvailable emails:\n\nnancy@sisinternational.com\nanna@sisinternational.com\njohn@sisinternational.com\ncharles@sisinternational.com\n\nSelect email: ")
+
+    remaining = 100
     send_emails_selenium_concurrency(cc, FROM_EMAIL, slice_size, email_id, remaining)
 
     logging.info('DONE!')
@@ -106,7 +113,7 @@ def send_out_mm_list():
 if __name__ == '__main__':
     acquire_lock()
     try:
-        create_mm_list()
-        send_out_mm_list()
+        limit = create_mm_list()
+        send_out_mm_list(limit)
     finally:
         release_lock()

@@ -6,7 +6,6 @@ import time
 import datetime
 import glob
 import os
-from dotenv import load_dotenv
 import numpy as np
 import traceback
 
@@ -21,12 +20,11 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 
 import modules.constants.main as const
-from modules.database.database import update_project_recruits_last_mm_sent, update_bcc_counters
+import modules.database.database as db
 
-load_dotenv() 
-password = os.getenv("BCC_PASSWORD")
-shubha_password = os.getenv("SHUBHA_BCC_PASSWORD")
-incentives_password = os.getenv("INCENTIVES_BCC_PASSWORD")
+password = const.BCC_PASSWORD
+shubha_password = const.SHUBHA_BCC_PASSWORD
+incentives_password = const.INCENTIVES_BCC_PASSWORD
 
 
 email_passwords_dict = {'nancy@sisinternational.com':password,
@@ -299,8 +297,8 @@ def send_emails_selenium_concurrency(cc, FROM_EMAIL, slice_size, email_id, remai
         try:
             send_email_selenium(mail['Email'], mail['message'], driver, cc)
             message = '\nemail sent to {email}\n{total_sent} sent emails in total'.format(email=mail['Email'], total_sent=n)
-            update_bcc_counters(email_id)
-            update_project_recruits_last_mm_sent(mail['project_id'], mail['id'])
+            db.update_bcc_counters(email_id)
+            db.update_project_recruits_last_mm_sent(mail['project_id'], mail['id'])
             print(message)
             n += 1
 

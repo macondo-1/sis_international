@@ -1,4 +1,4 @@
-from modules.database.database import reset_daily_mailmerge_limits, get_mailmerge_ready_records, get_today_mm_quota, get_project_limit_mm, get_project_name_with_project_number, choose_smtp_account
+import modules.database.database as db
 import modules.constants.main as const
 from modules.smtp_bot.smtp_bot import SMTP
 from modules.csv_tools.main import get_project_info
@@ -24,15 +24,15 @@ def release_lock():
 
 
 def create_mm_list():
-    logging.info('STARTING LOOP') 
-    logging.info('Getting blasts quota...') 
-    data = get_today_mm_quota()
-    logging.info('DONE!') 
-    
+    logging.info('STARTING LOOP')
+    logging.info('Getting blasts quota...')
+    data = db.get_today_mm_quota()
+    logging.info('DONE!')
+
     if not data:
-        logging.warning('No projects to work on!') 
+        logging.warning('No projects to work on!')
         logging.info('FINISHED LOOP\n')
-        return 
+        return
 
     df_blast_master = pd.read_excel(const.BLAST_MASTER_PATH)
     mm_list = []
@@ -41,31 +41,31 @@ def create_mm_list():
 
         project_info = get_project_info(project_id, df_blast_master)
         message = project_info['Blast Message']
-        
-        data = get_project_limit_mm(project_id)
+
+        data = db.get_project_limit_mm(project_id)
         limit = int(data[0][0])
         if limit < 0:
             limit = 0
         try:
-            project_name = get_project_name_with_project_number(project_id)[0]
+            project_name = db.get_project_name_with_project_number(project_id)[0]
         except Exception as e:
             print('error: {}'.format(e))
             continue
-        logging.info('Processing project {0} - {1}...'.format(project_id, project_name)) 
+        logging.info('Processing project {0} - {1}...'.format(project_id, project_name))
         logging.info('Getting records for Mailmerge...')
 
-        data = get_mailmerge_ready_records(project_id, limit)
+        data = db.get_mailmerge_ready_records(project_id, limit)
         recruits_ids = [x[0] for x in data]
         len_records = len(recruits_ids)
         mm_list_ = [(project_id, x) for x in recruits_ids]
 
         mm_list_ = [(x[0], x[1], x[2], message.format(First_name=str(x[1]).split(' ')[0].capitalize(), FROM_NAME='Ruth Stanat'), project_id) for x in data]
 
-        logging.info('Got {} records!'.format(len_records)) 
+        logging.info('Got {} records!'.format(len_records))
         mm_list.extend(mm_list_)
-    
 
-    logging.info('FINISHED LOOP\n') 
+
+    logging.info('FINISHED LOOP\n')
     if mm_list:
         with open(const.MM_READY_CSV, 'w') as file:
             writer = csv.writer(file)
@@ -73,7 +73,7 @@ def create_mm_list():
             writer.writerows(mm_list)
 
 def send_out_mm_list():
-    logging.info('STARTING LOOP') 
+    logging.info('STARTING LOOP')
     if not const.MM_READY_CSV.exists():
         logging.info("there's no mailmerge list. Skipping for now...")
         logging.info('FINISHED LOOP\n')
@@ -81,9 +81,9 @@ def send_out_mm_list():
 
     logging.info('Sending out mailerge list...')
     # CHECK: Need to log the email sending as it happens
-    data = choose_smtp_account()
+    data = db.choose_smtp_account()
     if not data:
-        logging.info('No available accounts!') 
+        logging.info('No available accounts!')
         logging.info('FINISHED LOOP\n')
         exit()
     hourly_remaining = data[4] - data[6]
@@ -100,7 +100,7 @@ def send_out_mm_list():
         logging.info('FINISHED LOOP\n')
         exit()
     handler.send_emails_smtp(email_id, remaining)
-    logging.info('DONE!') 
+    logging.info('DONE!')
     logging.info('FINISHED LOOP\n')
 
 

@@ -1,7 +1,7 @@
 from modules.project_class.main import Project
 from modules.csv_tools.main import get_project_info_from_filename, fix_columns_to_match_db, read_file_pandas, fix_data_before_insert_to_db
 from modules.utilities.main import get_information_from_blast_master_excel
-from modules.database.database import connect_to_db, insert_new_recruits, get_update_records, insert_update_recruits, insert_new_csv_to_db, bulk_update_records, prepare_update_records, update_validation_status, add_new_million_verifier_job, get_processing_jobs, update_mv_job_status, save_records_to_project, get_project_recruits, get_ss_ready_records, insert_new_blasting_quotas, get_today_blast_quota, update_project_recruits_last_sent, save_newly_added_records_to_project, get_project_limit, prepare_csv_for_database_input, insert_new_mailmerging_quotas, create_column_mapper_and_prepare_for_db_input, get_project_name_with_project_number, insert_into_table_surveys, insert_into_table_surveys_bulk, insert_into_table_survey_collectors_bulk, insert_into_table_survey_responses_daily_bulk
+import modules.database.database as db
 from modules.super_send.super_send import SuperSend
 from modules.million_verifier_api.million_verifier_api import MillionVerifier
 from modules.smtp_bot.smtp_bot import SMTP
@@ -52,7 +52,7 @@ def save_new_ru_files_to_db():
 
             file_path = Path(file_path)
             source, status, project_id = 'ramped_up','cold',' '
-            insert_new_csv_to_db(file_path, source, status, project_id)
+            db.insert_new_csv_to_db(file_path, source, status, project_id)
 
             lines.append(str(file_path))
 
@@ -73,7 +73,7 @@ def save_new_ru_files_to_db():
             print('saved succesfully!')
 
 def query_to_csv(query_str: str, out_path: str):
-    conn, cursor = connect_to_db()
+    conn, cursor = db.connect_to_db()
     print('connected succesfully')
     cursor.execute(query_str)
     print('query executed succesfully')
@@ -87,7 +87,7 @@ def query_project_needs(sql_file_path: str, limit: int):
     with open(sql_file_path, 'r') as file:
         query = file.read()
     query = query.format(limit=limit)
-    conn, cursor = connect_to_db()
+    conn, cursor = db.connect_to_db()
     print('connected succesfully')
     cursor.execute(query)
     print('query executed succesfully')
@@ -117,7 +117,7 @@ def release_lock():
         os.remove(LOCK_FILE_PATH)
 
 def download_and_process_all_available_lists_on_mv():
-    jobs = get_processing_jobs()
+    jobs = db.get_processing_jobs()
     if not jobs:
         print('nothing to process')
         return
@@ -135,10 +135,10 @@ def download_and_process_all_available_lists_on_mv():
                 validated_file_name = const.MV_TEMP_DIR / 'validated_{}.csv'.format(job_id)
                 mv_handler.save_csv_file(mv_report, validated_file_name)
                 print('updating validation status... ', job_id)
-                update_validation_status(validated_file_name)
+                db.update_validation_status(validated_file_name)
                 print('update done')
                 os.remove(validated_file_name)
-                update_mv_job_status(job_id, 'completed')
+                db.update_mv_job_status(job_id, 'completed')
 
         except Exception as e:
             print(f"Error processing MillionVerifier job {job_id}: {e}")
@@ -527,8 +527,23 @@ def generate_report(
 
 
 if __name__ == '__main__':
-    # project_id = '2010273'
-    # save_records_to_project(project_id)
+
+    # db.save_reports_to_csv('/Users/albertoruizcajiga/Downloads')
+
+    # project_id = '1999441'
+    # project_name = 'mindset_cruise_eur'
+    # ss_campaign_id = 'a0ba0d38-a342-4a9e-bcfc-782b51d6f413'
+    # db.insert_new_project(project_id, project_name, ss_campaign_id)
+
+    # project_id = '2010041'
+    # db.save_records_to_project(project_id)
+
+    # acquire_lock()
+    # try:
+    #     file_path = '/Users/albertoruizcajiga/Downloads/blast_needs.csv'
+    #     db.insert_new_mailmerging_quotas(file_path)
+    # finally:
+    #     release_lock()
 
 
     # filename = '/Users/albertoruizcajiga/python/survey_monkey_api/files/all_surveys_jsons_csv/all_responses_counts.csv'
@@ -559,12 +574,7 @@ if __name__ == '__main__':
     # project_id = '1150717'
     # data = get_project_limit(project_id)
     # print(data)
-    acquire_lock()
-    try:
-        file_path = '/Users/albertoruizcajiga/Downloads/blast_needs.csv'
-        insert_new_mailmerging_quotas(file_path)
-    finally:
-        release_lock()
+
     
     # # CONTINUE THIS
     # blast_needs_file_path = '/Users/albertoruizcajiga/Downloads/blast.csv'
@@ -694,7 +704,7 @@ if __name__ == '__main__':
     # with open(sql_file_path, 'r') as file:
     #     query = file.read()
 
-    # out_path = '/Users/albertoruizcajiga/Downloads/alex_nyc_mm.csv'
+    # out_path = '/Users/albertoruizcajiga/Downloads/switzerland_opt_ins.csv'
     # query_to_csv(query, out_path)
 
     # MAKE THIS A DATABASE MODULE
@@ -714,10 +724,10 @@ if __name__ == '__main__':
 
     # MAKE THIS A DATABASE MODULE
     # SAVE NEW CSV INTO DATABASE
-    # dir_path = Path('/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/pending_database_input/manual_cleaning_needed')
-    # for x in dir_path.glob('*.csv'):
-    #     print('preparing... ', x.name)
-    #     # ids = insert_new_csv_to_db(x, source="", status='cold', project_id="")
-    #     # project_id = '1993742'
-    #     project_id = '1546582'
-    #     prepare_csv_for_database_input(x, source="client", status='cold', project_id=project_id)
+    dir_path = Path('/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/pending_database_input/manual_cleaning_needed')
+    for x in dir_path.glob('*.csv'):
+        print('preparing... ', x.name)
+        # ids = insert_new_csv_to_db(x, source="", status='cold', project_id="")
+        # project_id = '1993742'
+        project_id = '111111'
+        db.prepare_csv_for_database_input(x, source="zoominfo", status='cold', project_id=project_id)

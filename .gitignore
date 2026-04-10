@@ -4,7 +4,6 @@ files/projects
 .DS_Store
 constants.py
 files/utilities
-modules/constants/main.py
 modules/database/files
 notes.txt
 
@@ -14,6 +13,9 @@ __pycache__/
 
 # Logs
 files/logs/
+
+# Lock files
+files/temp/
 
 # MillionVerifier temp files
 modules/million_verifier_api/temp/

@@ -14,11 +14,7 @@ import email.mime.multipart
 import logging
 
 import modules.constants.main as const
-from modules.database.database import update_smtp_counters, update_project_recruits_last_mm_sent
-
-from dotenv import load_dotenv
-
-load_dotenv()
+import modules.database.database as db
 
 
 # CHECK: re route to csv tools or utilities
@@ -39,7 +35,7 @@ class SMTP():
         self.host = const.SMTP_HOST
         self.port = const.SMTP_PORT
         self.email = email_account
-        self.password = os.getenv("GODADDY_PASSWORD")
+        self.password = const.GODADDY_PASSWORD
         self.mailserver = smtplib.SMTP(self.host, self.port)
         try:
             self.mailserver.starttls()
@@ -128,8 +124,8 @@ class SMTP():
 
                 try:
                     self.mailserver.sendmail(msg['From'], msg['To'], msg.as_string())
-                    update_smtp_counters(email_id)
-                    update_project_recruits_last_mm_sent(mail['project_id'], mail['id'])
+                    db.update_smtp_counters(email_id)
+                    db.update_project_recruits_last_mm_sent(mail['project_id'], mail['id'])
 
                     new_df.loc[df_index, 'status'] = 'sent'
 

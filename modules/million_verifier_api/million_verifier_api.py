@@ -1,11 +1,7 @@
-import os 
 import requests
-import logging 
+import logging
 import json
-from pathlib import Path
-from dotenv import load_dotenv
-
-
+from config import MV_API_KEY
 
 
 
@@ -14,8 +10,7 @@ class APIError(Exception):
 
 class MillionVerifier:
     def __init__(self):
-        load_dotenv()
-        self.api_key = os.getenv("MV_API_KEY")
+        self.api_key = MV_API_KEY
         self.base_url = "https://bulkapi.millionverifier.com/bulkapi/v2"
 
         self.headers = {'Authorization': 'Bearer {}'.format(self.api_key),

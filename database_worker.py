@@ -1,4 +1,4 @@
-from modules.database.database import insert_new_csv_to_db, save_newly_added_records_to_project, get_project_name_with_project_number, prepare_csv_for_database_input, create_column_mapper_and_prepare_for_db_input
+import modules.database.database as db
 import modules.constants.main as const
 import os
 import shutil
@@ -19,11 +19,11 @@ def release_lock():
         os.remove(const.DB_LOCK_FILE_PATH)
 
 def main():
-    logging.info('STARTING LOOP') 
+    logging.info('STARTING LOOP')
     file_names = list(const.DATABASE_INPUT_DIR.glob('*.csv'))
     if not file_names:
-        logging.info('Nothing to insert into the database!') 
-        logging.info('FINISHED LOOP\n') 
+        logging.info('Nothing to insert into the database!')
+        logging.info('FINISHED LOOP\n')
         return
 
     for file_path in const.DATABASE_INPUT_DIR.glob('*.csv'):
@@ -43,23 +43,23 @@ def main():
             # logging.info('DONE!')
 
             logging.info('Inserting file %s...', Path(file_path).name)
-            data = insert_new_csv_to_db(file_path)
+            data = db.insert_new_csv_to_db(file_path)
             ids = data[0]
-            logging.info('DONE!') 
+            logging.info('DONE!')
             if project_id:
                 # check: uncaught error if project name cannot be obtained
                 # check: doesnt work if project is not in project table before
-                project_name = get_project_name_with_project_number(project_id)[0]
+                project_name = db.get_project_name_with_project_number(project_id)[0]
                 logging.info('Saving for project {0} - {1}'.format(project_id, project_name))
-                save_newly_added_records_to_project(project_id, ids)
-                logging.info('DONE!') 
+                db.save_newly_added_records_to_project(project_id, ids)
+                logging.info('DONE!')
             time.sleep(1)
         except Exception as e:
             logging.warning('Failed inserting new csv to database and assigning it to a project blast./nError: {}'.format(e))
             new_path = const.FAILED_DATABASE_INPUT_DIR / Path(file_path).name
             shutil.move(file_path, new_path)
             logging.info('Moved to failed files directory...')
-    logging.info('FINISHED LOOP\n') 
+    logging.info('FINISHED LOOP\n')
 
 if __name__ == '__main__':
     acquire_lock()

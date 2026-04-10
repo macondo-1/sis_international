@@ -1,16 +1,14 @@
-import os 
 import requests
-import logging 
+import logging
 import json
-from dotenv import load_dotenv
+from config import SS_API_KEY
 
 class APIError(Exception):
     pass
 
 class SuperSend:
     def __init__(self):
-        load_dotenv()
-        self.api_key = os.getenv("SS_API_KEY")
+        self.api_key = SS_API_KEY
         self.base_url = 'https://api.supersend.io/v2'
         self.headers = {'Authorization': 'Bearer {}'.format(self.api_key),
                         'Content-Type': 'application/json'}
@@ -85,6 +83,7 @@ class SuperSend:
         except APIError as err:
             print(f"API error: {err}")
 
+    # check: need to mark bad email as is_active = 0
     def bulk_create_contacts(self, contacts: list[dict], campaign_id:str, team_id: str = "1523d91c-eb2c-400a-b97d-37ca8247a0e6") -> dict:
         """
         Sends a list of dictionaries of contacts to create
@@ -110,21 +109,37 @@ class SuperSend:
 
         # CHECK: Need to add all
         valid_payload_keys = ["email","first_name","last_name","company_name"]
+        sent = 0
+        index = 0
+        counter = 1
+        while not sent:
 
-        payload = {
-            "contacts": contacts,
-            "TeamId": "{}".format(team_id),
-            "CampaignId": "{}".format(campaign_id),
-            "validate_emails": "true"
-            }
+            if index:
+                contacts.pop(int(index))
 
-        endpoint = 'contacts/bulk'
+            payload = {
+                "contacts": contacts,
+                "TeamId": "{}".format(team_id),
+                "CampaignId": "{}".format(campaign_id),
+                "validate_emails": "true"
+                }
 
-        try:
-            data = self.make_request(endpoint=endpoint, json_var=payload, method='post')
-            return data
-        except APIError as err:
-            print(f"API error: {err}")
+            endpoint = 'contacts/bulk'
+
+            try:
+                data = self.make_request(endpoint=endpoint, json_var=payload, method='post')
+                return data
+            except APIError as err:
+                logging.warning(f"API error: {err}")
+                err = str(err)
+                index = err.split('contacts[')[1]
+                index = index.split(']')[0]
+                logging.warning(f"Failed index: {index}")
+                logging.info('trying again... loop {}'.format(counter))
+                counter += 1
+
+
+
 
     def delete_contact_by_id(self, contact_id: str) -> dict:
         endpoint = 'contacts/{}'.format(contact_id)

@@ -1,56 +1,73 @@
-# PATHS
-from pathlib import Path
+# All path and secret variables are sourced from environment variables via
+# config.py. This file re-exports them under their original names so that
+# existing callers (workers, modules) require no import changes.
 
-BASE_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/My Drive/Information_Technology/alberto/utilities')
-projects_base_path = BASE_PATH.joinpath('sis_international_files', 'projects')
-db_file_path = BASE_PATH.joinpath('sis_international_files','database','sis_database.db')
+from config import (
+    # secrets
+    SS_API_KEY,
+    MV_API_KEY,
+    APOLLO_API_KEY,
+    GODADDY_PASSWORD,
+    BCC_PASSWORD,
+    SHUBHA_BCC_PASSWORD,
+    INCENTIVES_BCC_PASSWORD,
+    # database
+    SQLITE_DB_PATH as database_path,
+    # base / campaign paths
+    BASE_PATH,
+    BLAST_MASTER_PATH,
+    MM_READY_CSV,
+    MAILING_PATH,
+    LOG_PATH,
+    GODADDY_EMAILS_PATH,
+    BCC_FOOTER_PATH,
+    # local working directories
+    TEMP_DIR,
+    TEMP_DB_DIR,
+    MV_TEMP_DIR,
+    DATABASE_INPUT_DIR,
+    FAILED_DATABASE_INPUT_DIR,
+    MANUAL_CLEANING_DIR,
+    # local file paths
+    DATABASE_MAPPERS_PATH,
+    FOOTER_PATH,
+    # lock files
+    DB_LOCK_FILE_PATH,
+    SS_LOCK_FILE_PATH,
+    MV_LOCK_FILE_PATH,
+    SMTP_LOCK_FILE_PATH,
+    BCC_LOCK_FILE_PATH,
+    # log files
+    SS_LOG_FILE,
+    MV_LOG_FILE,
+    DB_LOG_FILE,
+    SMTP_LOG_FILE,
+    BCC_LOG_FILE,
+)
 
-blast_master_excel_path = BASE_PATH.joinpath('blast_master_good_final.xlsx')
+# Paths derived from BASE_PATH — kept as computed values rather than separate
+# env variables to avoid redundancy. If BASE_PATH changes, these follow.
+projects_base_path = BASE_PATH / 'sis_international_files' / 'projects'
+db_file_path = BASE_PATH / 'sis_international_files' / 'database' / 'sis_database.db'
 
-# CHECK: change this path once the final location is defined
-database_path = Path('/Users/albertoruizcajiga/python/sis_international/modules/database/files/sis_international.db')
+# Legacy alias used by modules/utilities
+blast_master_excel_path = BLAST_MASTER_PATH
 
-# VALUES (?)
+# ---------------------------------------------------------------------------
+# Static constants — not environment-dependent
+# ---------------------------------------------------------------------------
 
-DB_COLUMNS = ['first_name', 'last_name', 'age', 'date_of_birth', 'gender',
-       'ethnicity', 'nationality', 'education', 'email', 'other_emails',
-       'phone_number', 'linkedin', 'facebook', 'twitter', 'other_links',
-       'country', 'state', 'city', 'zip_code', 'job_title', 'industry',
-       'company_name', 'job_keywords', 'file_name', 'source', 'creation_date',
-       'last_update', 'projects_ids', 'status', 'email_validation',
-       'is_active']
+DB_COLUMNS = [
+    'first_name', 'last_name', 'age', 'date_of_birth', 'gender',
+    'ethnicity', 'nationality', 'education', 'email', 'other_emails',
+    'phone_number', 'linkedin', 'facebook', 'twitter', 'other_links',
+    'country', 'state', 'city', 'zip_code', 'job_title', 'industry',
+    'company_name', 'job_keywords', 'file_name', 'source', 'creation_date',
+    'last_update', 'projects_ids', 'status', 'email_validation', 'is_active',
+]
 
-DATABASE_MAPPERS_PATH = Path('/Users/albertoruizcajiga/python/sis_international/files/utilities/database_mappers.json')
+SOURCES = ['apollo', 'qualtrics']
 
-SOURCES = ['apollo','qualtrics']
-
-TEMP_DB_DIR = Path('/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp')
-
-TEMP_DIR = Path('/Users/albertoruizcajiga/python/sis_international/files/temp')
-
-MV_TEMP_DIR = Path('/Users/albertoruizcajiga/python/sis_international/modules/million_verifier_api/temp')
-
-MV_LOCK_FILE_PATH = Path('/Users/albertoruizcajiga/python/sis_international/modules/million_verifier_api/temp/mv_lock_file.lock')
-
-SS_LOCK_FILE_PATH = Path('/Users/albertoruizcajiga/python/sis_international/modules/super_send/temp/ss_lock_file.lock')
-
-DATABASE_INPUT_DIR = Path('/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/pending_database_input')
-
-DB_LOCK_FILE_PATH  = Path('/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/db_lock_file.lock')
-
-FAILED_DATABASE_INPUT_DIR = Path('/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/pending_database_input/failed_files')
-
-SS_LOG_FILE = Path('/Users/albertoruizcajiga/python/sis_international/files/logs/ss_cron.log')
-
-MV_LOG_FILE = Path('/Users/albertoruizcajiga/python/sis_international/files/logs/mv_cron.log')
-
-DB_LOG_FILE = Path('/Users/albertoruizcajiga/python/sis_international/files/logs/db_cron.log')
-
-MANUAL_CLEANING_DIR = Path('/Users/albertoruizcajiga/python/sis_international/modules/database/files/temp/pending_database_input/manual_cleaning_needed')
-
-
-MM_READY_CSV = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/My Drive/Information_Technology/alberto/utilities/mailing_bot/alberto/mm_list.csv')
-FOOTER_PATH = Path('/Users/albertoruizcajiga/python/sis_international/modules/smtp_bot/files/footer.txt')
 SMTP_HOST = 'smtp.office365.com'
 SMTP_PORT = 587
 
@@ -62,21 +79,3 @@ ruthstanat@sisinternationalresearch.net
 ruthstanat@sisresearch.org
 
 Select email: """
-
-LOG_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/My Drive/Information_Technology/alberto/utilities/log/log.csv')
-
-GODADDY_EMAILS_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/My Drive/Information_Technology/alberto/utilities/godaddy_emails.csv')
-
-SMTP_LOG_FILE = Path('/Users/albertoruizcajiga/python/sis_international/files/logs/smtp_cron.log')
-
-BCC_LOG_FILE = Path('/Users/albertoruizcajiga/python/sis_international/files/logs/bcc_cron.log')
-
-SMTP_LOCK_FILE_PATH = Path('/Users/albertoruizcajiga/python/sis_international/modules/super_send/temp/smtp_lock_file.lock')
-
-BLAST_MASTER_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/My Drive/Information_Technology/alberto/utilities/blast_master_good_final.xlsx')
-
-BCC_FOOTER_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/' \
-'My Drive/Information_Technology/alberto/utilities/footer_bcc.txt')
-
-MAILING_PATH = Path('/Users/albertoruizcajiga/Library/CloudStorage/GoogleDrive-beautifulday874@gmail.com/' \
-'My Drive/Information_Technology/alberto/utilities/mailing_bot')

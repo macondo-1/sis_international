@@ -14,14 +14,20 @@ from datetime import datetime
 import traceback
 import uuid
 import sys
+import re
 
 # CHECK: other_emails should be added as a list
+
+def regexp(pattern, string):
+    """Custom REGEXP function for SQLite using Python's re module"""
+    return bool(re.match(pattern, string))
 
 def connect_to_db(): # CHECK why this fails? -> tuple(sqlite3.Connection, sqlite3.Cursor):
     """
     Connects to the database and returns a cursor
     """
     conn = sqlite3.connect(const.database_path)
+    conn.create_function("REGEXP", 2, regexp)  # Register custom REGEXP function
     cursor = conn.cursor()
     
     return conn, cursor
@@ -584,6 +590,7 @@ def get_project_recruits(project_id:str):
     """, (project_id,))
     return cursor.fetchall()
 
+# check: unsure if the regexp is working as supposed
 def get_ss_ready_records(project_id:str, limit:str):
     """
     ss ready meaning valid records
@@ -670,6 +677,7 @@ def get_mailmerge_ready_records(project_id:str, limit:str):
                     AND r.is_active = 1
                     AND r.email_validation IN ('valid', 'ok')
                     AND (r."opt-in" = 1 OR r.is_gmail = 1)
+                    ORDER BY r.ID DESC
                     LIMIT ?;""", (project_id, limit))
     results = cursor.fetchall()
     conn.close()
@@ -1061,4 +1069,109 @@ def insert_into_table_survey_responses_daily_bulk(values=list):
 # query to save matches to projects_recipients
 # query to extract N elements from recruits considering projects_recipients
 # query to save extractions into mail_events
+
+def get_super_send_report():
+    conn, cursor = connect_to_db()
+    query = """
+        WITH sent_today AS (
+            SELECT
+                project_id,
+                COUNT(*) AS sent_today
+            FROM project_recruits
+            WHERE date(last_sent_at) = date('now')
+              AND strategy = 'super_send'
+            GROUP BY project_id
+        ),
+        available AS (
+            SELECT
+                project_id,
+                COUNT(*) AS available_records
+            FROM project_recruits
+            WHERE last_sent_at IS NULL
+              AND strategy = 'super_send'
+            GROUP BY project_id
+        )
+        SELECT
+            q.project_id,
+            p.project_name,
+            COALESCE(s.sent_today, 0) AS sent_today,
+            q.total_records,
+            q.total_records - COALESCE(s.sent_today, 0) AS remaining,
+            COALESCE(a.available_records, 0) AS available_records
+        FROM daily_project_quota AS q
+        JOIN projects AS p
+            ON p.project_id = q.project_id
+        LEFT JOIN sent_today AS s
+            ON s.project_id = q.project_id
+        LEFT JOIN available AS a
+            ON a.project_id = q.project_id
+        WHERE q.run_date = date('now')
+        ORDER BY q.id;
+    """
+    cursor.execute(query)
+    data = cursor.fetchall()
+    conn.close()
+    return data
+
+def save_reports_to_csv(out_dir: Path = const.TEMP_DIR):
+    import datetime
+    today = datetime.date.today().isoformat()
+    headers = ['project_id', 'project_name', 'sent_today', 'total_records', 'remaining', 'available_records']
+
+    ss_path = Path(out_dir) / f'super_send_report_{today}.csv'
+    with open(ss_path, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+        writer.writerows(get_super_send_report())
+
+    mm_path = Path(out_dir) / f'mailmerge_report_{today}.csv'
+    with open(mm_path, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+        writer.writerows(get_mailmerge_report())
+
+    return ss_path, mm_path
+
+def get_mailmerge_report():
+    conn, cursor = connect_to_db()
+    query = """
+        WITH sent_today AS (
+            SELECT
+                project_id,
+                COUNT(*) AS sent_today
+            FROM project_recruits
+            WHERE date(last_sent_at) = date('now')
+              AND strategy = 'mailmerge'
+            GROUP BY project_id
+        ),
+        available AS (
+            SELECT
+                project_id,
+                COUNT(*) AS available_records
+            FROM project_recruits
+            WHERE last_sent_at IS NULL
+              AND strategy = 'mailmerge'
+            GROUP BY project_id
+        )
+        SELECT
+            q.project_id,
+            p.project_name,
+            COALESCE(s.sent_today, 0) AS sent_today,
+            q.total_records,
+            q.total_records - COALESCE(s.sent_today, 0) AS remaining,
+            COALESCE(a.available_records, 0) AS available_records
+        FROM daily_project_quota_mm AS q
+        JOIN projects AS p
+            ON p.project_id = q.project_id
+        LEFT JOIN sent_today AS s
+            ON s.project_id = q.project_id
+        LEFT JOIN available AS a
+            ON a.project_id = q.project_id
+        WHERE q.run_date = date('now')
+        ORDER BY q.id;
+    """
+    cursor.execute(query)
+    data = cursor.fetchall()
+    conn.close()
+    return data
 

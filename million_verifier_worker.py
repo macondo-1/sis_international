@@ -1,4 +1,4 @@
-from modules.database.database import get_project_recruits, get_processing_jobs, update_validation_status, update_mv_job_status, get_project_name_with_project_number
+import modules.database.database as db
 import modules.constants.main as const
 from modules.million_verifier_api.million_verifier_api import MillionVerifier
 import os
@@ -20,11 +20,11 @@ def release_lock():
         os.remove(const.MV_LOCK_FILE_PATH)
 
 def download_and_process_all_available_lists_on_mv():
-    logging.info('STARTING LOOP') 
-    jobs = get_processing_jobs()
+    logging.info('STARTING LOOP')
+    jobs = db.get_processing_jobs()
     if not jobs:
-        logging.info('Nothing to download from MillionVerifier!') 
-        logging.info('FINISHED LOOP\n') 
+        logging.info('Nothing to download from MillionVerifier!')
+        logging.info('FINISHED LOOP\n')
         return
 
     for (job_id,) in jobs:
@@ -35,22 +35,22 @@ def download_and_process_all_available_lists_on_mv():
             project_id = file_info_dict['file_name']
 
             if status == 'finished':
-                project_name = get_project_name_with_project_number(project_id)[0]
-                logging.info('Downloading {0} - {1}...'.format(project_id, project_name)) 
+                project_name = db.get_project_name_with_project_number(project_id)[0]
+                logging.info('Downloading {0} - {1}...'.format(project_id, project_name))
                 mv_report = mv_handler.download_report(job_id)
                 validated_file_name = const.MV_TEMP_DIR / 'validated_{}.csv'.format(job_id)
                 mv_handler.save_csv_file(mv_report, validated_file_name)
                 logging.info('Updating validation status... ')
-                update_validation_status(validated_file_name)
+                db.update_validation_status(validated_file_name)
                 os.remove(validated_file_name)
-                update_mv_job_status(job_id, 'completed')
+                db.update_mv_job_status(job_id, 'completed')
                 logging.info('DONE!')
 
         except Exception as e:
             logging.warning(f"Error processing MillionVerifier job {job_id}: {e}")
             print('traceback:')
-            traceback.print_exc() 
-            
+            traceback.print_exc()
+
     logging.info('FINISHED LOOP\n')
 
 if __name__ == '__main__':
