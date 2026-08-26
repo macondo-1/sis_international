@@ -147,18 +147,22 @@ class Project:
         conn = sqlite3.connect(self.db_file_path)
         try:
             cursor = conn.cursor()
-            # Table/index names from sqlite_master are metadata, not
-            # attacker-supplied text -- safe to compare against directly.
+            # SQL identifiers are case-insensitive, so these lookups are
+            # too (lowercased key -> real, correctly-cased name) -- a
+            # plain `in` against exact-case sqlite_master/PRAGMA output
+            # would wrongly reject a valid table/column supplied in a
+            # different case.
             known_tables = {
-                row[0] for row in cursor.execute(
+                row[0].lower(): row[0] for row in cursor.execute(
                     "SELECT name FROM sqlite_master WHERE type='table'"
                 )
             }
-            if table_name not in known_tables:
+            if table_name.lower() not in known_tables:
                 raise ValueError(f"Unknown table: {table_name!r}")
+            table_name = known_tables[table_name.lower()]
 
             known_columns = {
-                row[1]  # PRAGMA table_info: (cid, name, type, notnull, dflt_value, pk)
+                row[1].lower(): row[1]  # PRAGMA table_info: (cid, name, type, notnull, dflt_value, pk)
                 for row in cursor.execute(f"PRAGMA table_info({table_name})")
             }
         finally:
@@ -172,8 +176,9 @@ class Project:
             if values == [None]:
                 continue
 
-            if field not in known_columns:
+            if field.lower() not in known_columns:
                 raise ValueError(f"Unknown column: {field!r}")
+            field = known_columns[field.lower()]
 
             field_conditions = []
             for value in values:

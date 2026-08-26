@@ -48,11 +48,17 @@ def _validate_table_and_columns(cursor, table_name: str, headers) -> None:
     Raises ValueError if table_name or any column in headers isn't real,
     instead of letting a crafted CSV header inject SQL fragments into the
     column list of an INSERT/UPDATE statement.
+
+    Comparisons are case-insensitive to match SQL identifier resolution
+    (SQLite treats `Email` and `email` as the same column) -- a plain
+    case-sensitive check would wrongly reject a valid CSV header whose
+    casing differs from how the column was originally declared.
     """
-    if table_name not in _known_tables(cursor):
+    known_tables_lower = {t.lower() for t in _known_tables(cursor)}
+    if table_name.lower() not in known_tables_lower:
         raise ValueError(f"Unknown table: {table_name!r}")
-    known = _known_columns(cursor, table_name)
-    unknown = [h for h in headers if h not in known]
+    known_lower = {c.lower() for c in _known_columns(cursor, table_name)}
+    unknown = [h for h in headers if h.lower() not in known_lower]
     if unknown:
         raise ValueError(f"Unknown column(s) in {table_name!r}: {unknown!r}")
 
