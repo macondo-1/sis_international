@@ -22,6 +22,40 @@ def regexp(pattern, string):
     """Custom REGEXP function for SQLite using Python's re module"""
     return bool(re.match(pattern, string))
 
+
+def _known_columns(cursor, table_name: str) -> set:
+    """
+    Real column names of table_name via PRAGMA table_info. Used to validate
+    CSV header rows before splicing them into SQL as column identifiers --
+    row *values* already go through ? placeholders below, but identifiers
+    can't be parameterized that way, so an unrecognized name here means
+    reject, not "trust the CSV". table_name itself must already be a
+    validated, known table (see _known_tables) before calling this.
+    """
+    return {row[1] for row in cursor.execute(f"PRAGMA table_info({table_name})")}
+
+
+def _known_tables(cursor) -> set:
+    """Real table names via sqlite_master -- metadata, not attacker text."""
+    return {
+        row[0] for row in
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    }
+
+
+def _validate_table_and_columns(cursor, table_name: str, headers) -> None:
+    """
+    Raises ValueError if table_name or any column in headers isn't real,
+    instead of letting a crafted CSV header inject SQL fragments into the
+    column list of an INSERT/UPDATE statement.
+    """
+    if table_name not in _known_tables(cursor):
+        raise ValueError(f"Unknown table: {table_name!r}")
+    known = _known_columns(cursor, table_name)
+    unknown = [h for h in headers if h not in known]
+    if unknown:
+        raise ValueError(f"Unknown column(s) in {table_name!r}: {unknown!r}")
+
 def connect_to_db(): # CHECK why this fails? -> tuple(sqlite3.Connection, sqlite3.Cursor):
     """
     Connects to the database and returns a cursor
@@ -46,6 +80,7 @@ def insert_new_recruits(file_path) -> None:
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
         headers = next(reader)
+        _validate_table_and_columns(cursor, 'recruits', headers)
         headers_str = ', '.join(headers)
         placeholders = ', '.join(['?'] * (len(headers)+1)) # CHECK: the +1 is because batch id is added after in the query
         query = 'INSERT OR IGNORE INTO recruits ({0}, batch_id) VALUES ({1});'.format(headers_str, placeholders)
@@ -78,6 +113,7 @@ def insert_update_recruits(file_path) -> None:
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
         headers = next(reader)
+        _validate_table_and_columns(cursor, 'pending_update', headers)
         headers_str = ', '.join(headers)
         placeholders = ', '.join(['?'] * len(headers))
         query = 'INSERT OR IGNORE INTO pending_update ({0}) VALUES ({1})'.format(headers_str, placeholders)
@@ -101,6 +137,7 @@ def insert_into_table(file_path, table_name) -> None:
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
         headers = next(reader)
+        _validate_table_and_columns(cursor, table_name, headers)
         headers_str = ', '.join(headers)
         placeholders = ', '.join(['?'] * len(headers))
         query = 'INSERT OR IGNORE INTO {0} ({1}) VALUES ({2})'.format(table_name, headers_str, placeholders)
@@ -303,6 +340,7 @@ def bulk_update_records(file_path:Path, table_name:str = 'recruits') -> None:
         reader = csv.reader(file)
         headers = next(reader)
         headers = [x for x in headers if x != 'ID']
+        _validate_table_and_columns(cursor, table_name, headers)
         set_clause = ", ".join([f"{header} = ?" for header in headers])
         query = 'UPDATE {0} SET {1} WHERE ID = ?'.format(table_name, set_clause)
         
@@ -688,6 +726,7 @@ def insert_new_blasting_quotas(file_path:str):
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
         headers = next(reader)
+        _validate_table_and_columns(cursor, 'daily_project_quota', headers)
         headers_str = ', '.join(headers)
         placeholders = ', '.join(['?'] * len(headers))
         query = 'INSERT INTO daily_project_quota ({0}) VALUES ({1})'.format(headers_str, placeholders)
@@ -705,6 +744,7 @@ def insert_new_mailmerging_quotas(file_path:str):
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
         headers = next(reader)
+        _validate_table_and_columns(cursor, 'daily_project_quota_mm', headers)
         headers_str = ', '.join(headers)
         placeholders = ', '.join(['?'] * len(headers))
         query = 'INSERT INTO daily_project_quota_mm ({0}) VALUES ({1})'.format(headers_str, placeholders)
